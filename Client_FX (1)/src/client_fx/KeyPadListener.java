@@ -1,0 +1,90 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package client_fx;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
+
+/**
+ *
+ * @author roy
+ */
+public class KeyPadListener {
+    private ButtonPressedListener bpListener = null;
+    private static KeyPadListener instance = null;
+    private SerialPort port;
+    public static KeyPadListener getListener(String portName){
+        if(instance == null)
+        {
+            instance = new KeyPadListener(portName);
+        }
+        return instance;
+    }
+    
+    public static KeyPadListener getListener() throws Exception{
+        if(instance == null)
+        {
+            throw new Exception("No listener present and no port name given :(");
+        }
+        return instance;
+    }
+    public void setKeyPressedListener(ButtonPressedListener listener)
+    {
+        this.bpListener = listener;
+    }
+    
+    private KeyPadListener(String serialPortName)
+    {
+        try{
+            port = new SerialPort(serialPortName);
+            port.openPort();
+            port.setParams(9600, 8, 1, 0);
+
+            port.addEventListener(new SerialPortEventListener() {
+                   
+                @Override
+                public void serialEvent(SerialPortEvent spe) {
+                    try {
+                        String[][] table = new String[][]{{"D", "#", "0", "*"},{"C", "9", "8", "7"},{"B", "6", "5", "4"},{"A", "3", "2", "1"}};
+                        Thread.sleep(100);
+                        String value = port.readString();
+                        if(value != null)
+                        {
+                            value = value.trim();
+                            if( value.length() == 5)
+                            {
+
+                                String sub = value.substring(0, 2);
+                                if(sub.equals("BU"))
+                                {
+                                    value = value.replace("BU", "");
+                                    String[] indices = value.split(",");
+                                    int i = Integer.parseInt(indices[0]);
+                                    int j = Integer.parseInt(indices[1]);
+                                    char key = table[i][j].charAt(0);
+                                    System.out.println(key);
+                                    bpListener.buttonPressed(key);
+                                }
+                                
+                            }
+                        }
+                        
+                    } catch (SerialPortException | InterruptedException ex) {
+                        Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+        }
+        catch(Exception e)
+        {
+
+        }
+    }
+}

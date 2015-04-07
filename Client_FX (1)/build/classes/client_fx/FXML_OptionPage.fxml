@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: yellow;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client_fx.FXML_OptionController" fx:id="pane">
+   <children>
+      <Label layoutY="35.0" text="ProjectHeist">
+         <font>
+            <Font size="46.0" />
+         </font>
+      </Label>
+      <Label layoutY="350.0" text="Voer uw optie in.">
+         <font>
+            <Font size="38.0" />
+         </font>
+      </Label>
+      <Button layoutX="350.0" layoutY="116.0" mnemonicParsing="false" text="Next_test" />
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="103.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="A" textAlignment="CENTER">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="160.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="B" textAlignment="CENTER">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="217.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="C" textAlignment="CENTER">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Label layoutX="162.0" layoutY="110.0" text="Geld opnemen">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label layoutX="162.0" layoutY="167.0" text="Saldo checken">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label layoutX="162.0" layoutY="224.0" text="Stop transactie">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Button layoutX="350.0" layoutY="173.0" mnemonicParsing="false" text="Next_test" />
+      <Button layoutX="350.0" layoutY="230.0" mnemonicParsing="false" text="Next_test" />
+   </children>
+</AnchorPane>
