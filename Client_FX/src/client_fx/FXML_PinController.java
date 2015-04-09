@@ -8,6 +8,7 @@ package client_fx;
 import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -38,60 +38,77 @@ public class FXML_PinController implements Initializable {
     private Label fourthDigit;
 
     private int digitState;
+    private char[] pincode;
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         nextWindow();
-    
     }
 
-    private void nextWindow() throws IOException{
+    private void nextWindow() throws IOException {
         Parent home_page_parent = FXMLLoader.load(getClass().getResource("FXML_OptionPage.fxml"));
         Scene home_page_scene = new Scene(home_page_parent);
         Stage app_stage = (Stage) firstDigit.getScene().getWindow();
         app_stage.hide();
         app_stage.setScene(home_page_scene);
         app_stage.show();
-        
+
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
+        pincode = new char[]{'-', '-', '-', '-'};
+
         try {
             KeyPadListener.getListener().setKeyPressedListener(new ButtonPressedListener() {
 
                 @Override
                 public void buttonPressed(char character) {
 
-                    String key = "" + character;
+                    char key = character;
                     Platform.runLater(new Runnable() {
+                        public boolean hasItem(char[] characters, char c) {
+                            for (int i = 0; i < characters.length; i++) {
+                                if (characters[i] == '-') {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+
                         @Override
                         public void run() {
                             if (character == '#') {
-                                try {
-                                    nextWindow();
-                                } catch (IOException ex) {
-                                    Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
+                                if (!hasItem(pincode, '-')) {
+                                    try {
+                                        System.out.println(String.format("Digits: %s", new String(pincode)));
+                                        nextWindow();
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
                                 }
+                            }else{
+                                switch (digitState) {
+                                    case 0:
+                                        firstDigit.setText("X");
+                                        pincode[0] = key;
+                                        break;
+                                    case 1:
+                                        secondDigit.setText("X");
+                                        pincode[1] = key;
+                                        break;
+                                    case 2:
+                                        thirdDigit.setText("X");
+                                        pincode[2] = key;
+                                        break;
+                                    case 3:
+                                        fourthDigit.setText("X");
+                                        pincode[3] = key;
+                                        break;
+                                }
+                                digitState++;
                             }
-                            switch (digitState) {
-                                case 0:
-                                    firstDigit.setText(key);
-                                    break;
-                                case 1:
-                                    secondDigit.setText(key);
-                                    break;
-                                case 2:
-                                    thirdDigit.setText(key);
-                                    break;
-                                case 3:
-                                    fourthDigit.setText(key);
-                                    break;
-                            }
-                            digitState++;
-
                         }
                     });
 

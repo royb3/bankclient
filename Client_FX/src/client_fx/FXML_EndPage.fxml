@@ -9,18 +9,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: yellow;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client_fx.FXML_EndController">
+<AnchorPane id="AnchorPane" fx:id="pane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: yellow;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client_fx.FXML_EndController">
    <children>
       <Label layoutY="35.0" text="ProjectHeist">
          <font>
             <Font size="46.0" />
          </font>
       </Label>
-      <Label layoutY="350.0" text="Bedankt voor uw bezoek">
+      <Label layoutY="350.0" text="Bedankt voor uw bezoek!">
          <font>
             <Font size="38.0" />
          </font>
       </Label>
-      <Button layoutX="414.0" layoutY="365.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Next_test" />
    </children>
 </AnchorPane>

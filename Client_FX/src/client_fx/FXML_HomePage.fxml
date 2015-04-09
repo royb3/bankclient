@@ -30,6 +30,6 @@
             <Font size="38.0" />
          </font>
       </Label>
-      <Button layoutX="509.0" layoutY="325.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Next_test" />
+      <Button layoutX="429.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Button" />
    </children>
 </AnchorPane>

@@ -71,6 +71,10 @@ public class FXML_MoneyController implements Initializable {
                                         //getMoney();
                                         nextWindow("FXML_BillPage.fxml");
                                         break;
+                                    case 'D':
+                                        //getMoney();
+                                        nextWindow("FXML_BillPage.fxml");
+                                        break;    
                                 }
                             } catch (IOException ex) {
                                 Logger.getLogger(FXML_OptionController.class.getName()).log(Level.SEVERE, null, ex);
