@@ -19,8 +19,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class FXML_HomePageController implements Initializable {
 
@@ -45,8 +49,9 @@ public class FXML_HomePageController implements Initializable {
     }
             
     @FXML
-    private void sendPayload(KeyEvent event) throws Exception{
-        //KeyPadListener.getListener().WriteDataToCard(new byte[]{'P', 'R', 'O', 'H', '0', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+    private void sendPayload(MouseEvent event) throws Exception{
+
+        nextWindow("FXML_CardSetup.fxml");
     }
     
     @Override
