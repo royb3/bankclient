@@ -1,3 +1,6 @@
 Iconr
 Client_FX (1)/dist
 /Client_FX/dist/
+*.class
+Client_FX/build/built-jar.properties
+Client_FX/nbproject/private/private.xml

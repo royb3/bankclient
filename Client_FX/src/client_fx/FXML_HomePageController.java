@@ -9,12 +9,17 @@ import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class FXML_HomePageController implements Initializable {
@@ -27,18 +32,49 @@ public class FXML_HomePageController implements Initializable {
     
     
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException{
-        Parent home_page_parent = FXMLLoader.load(getClass().getResource("FXML_PinPage.fxml"));
+    private AnchorPane pane;
+    
+    
+    public void nextWindow(String document) throws IOException{
+        Parent home_page_parent = FXMLLoader.load(getClass().getResource(document));
         Scene home_page_scene = new Scene(home_page_parent);
-        Stage app_stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        Stage app_stage = (Stage) pane.getScene().getWindow();
         app_stage.hide();
         app_stage.setScene(home_page_scene);
         app_stage.show();
     }
             
+    @FXML
+    private void sendPayload(KeyEvent event) throws Exception{
+        //KeyPadListener.getListener().WriteDataToCard(new byte[]{'P', 'R', 'O', 'H', '0', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        try {
+            KeyPadListener listener = KeyPadListener.getListener();
+            listener.ResetCardReader();
+            listener.setCardSwipedListener(new CardSwipeListener() {
+                
+                @Override
+                public void CardSwiped(String rekeningnummer) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                nextWindow("FXML_PinPage.fxml");
+                            } catch (IOException ex) {
+                                Logger.getLogger(FXML_HomePageController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            
+                        }
+                    });
+                }
+                
+            });
+        } catch (Exception ex) {
+            Logger.getLogger(FXML_HomePageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }    
     
 }

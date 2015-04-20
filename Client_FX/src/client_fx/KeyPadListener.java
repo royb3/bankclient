@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client_fx;
 
 import java.util.logging.Level;
@@ -18,8 +13,10 @@ import jssc.SerialPortException;
  */
 public class KeyPadListener {
     private ButtonPressedListener bpListener = null;
+    private CardSwipeListener csListener = null;
     private static KeyPadListener instance = null;
     private SerialPort port;
+    private String accountID;
     public static KeyPadListener getListener(String portName){
         if(instance == null)
         {
@@ -40,6 +37,10 @@ public class KeyPadListener {
         this.bpListener = listener;
     }
     
+    public void setCardSwipedListener(CardSwipeListener listener){
+        this.csListener = listener;
+    }
+    
     private KeyPadListener(String serialPortName)
     {
         try{
@@ -55,6 +56,7 @@ public class KeyPadListener {
                         String[][] table = new String[][]{{"D", "#", "0", "*"},{"C", "9", "8", "7"},{"B", "6", "5", "4"},{"A", "3", "2", "1"}};
                         Thread.sleep(100);
                         String value = port.readString();
+                        System.out.println("received: " + value);
                         if(value != null)
                         {
                             value = value.trim();
@@ -73,6 +75,20 @@ public class KeyPadListener {
                                     bpListener.buttonPressed(key);
                                 }
                                 
+                                
+                            }
+                            if(value.length() > 5){
+                                String sub = value.substring(0, 2);
+                                if(sub.equals("CR"))
+                                {
+                                    accountID = "";
+                                    String[] hexcodes = value.substring(4).split(" ");
+                                    for(String hexcode : hexcodes){
+                                        accountID += (char)Integer.parseInt(hexcode, 16);
+                                    }
+                                    System.out.println(accountID);
+                                    csListener.CardSwiped(accountID);
+                                }
                             }
                         }
                         
@@ -86,5 +102,28 @@ public class KeyPadListener {
         {
 
         }
+    }
+    
+    public String getAccountID(){
+        return this.accountID;
+    }
+    
+    public void WriteDataToCard(byte[] data) throws Exception{
+        if(data.length != 16)
+            throw new Exception("data must contain 16 bytes");
+        byte[] buffer = new byte[19];
+        
+        System.arraycopy(data, 0, buffer, 2, data.length);
+        buffer[0] = (byte) 0x7F;
+        buffer[1] = (byte) 0x70;
+        buffer[18]= (byte) 0x7F;
+        port.writeBytes(buffer);
+    }
+    public void ResetCardReader() throws SerialPortException{
+        
+        byte[] buffer = new byte[19];
+        buffer[0] = (byte) 0x10;
+        buffer[1] = (byte) 0x7F;
+        port.writeBytes(buffer);
     }
 }
