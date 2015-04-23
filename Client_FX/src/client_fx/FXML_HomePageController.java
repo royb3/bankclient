@@ -50,7 +50,7 @@ public class FXML_HomePageController implements Initializable {
             
     @FXML
     private void sendPayload(MouseEvent event) throws Exception{
-
+        KeyPadListener.getListener().setCardSwipedListener(null);
         nextWindow("FXML_CardSetup.fxml");
     }
     
