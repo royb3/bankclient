@@ -8,7 +8,7 @@ import java.awt.print.*;
 
 public class PrinterTest {
 
-    public void initialize(){
+    public PrinterTest(){
 
         PrinterJob pj = PrinterJob.getPrinterJob();
         if (pj.printDialog()) {
@@ -73,14 +73,9 @@ public class PrinterTest {
             int result = NO_SUCH_PAGE;    
             if (pageIndex < 1) {                    
                 Graphics2D g2d = (Graphics2D) graphics;                    
-                System.out.println("[Print] " + dump(pageFormat));                    
-                double width = pageFormat.getImageableWidth();
-                double height = pageFormat.getImageableHeight();    
-                g2d.translate((int) pageFormat.getImageableX(), 
-                    (int) pageFormat.getImageableY());
-                FontMetrics fm = g2d.getFontMetrics();
-                g2d.drawString("ProjectHeist", 5, 5);
-                g2d.drawString("Naam", 0, fm.getAscent());
+                System.out.println("[Print] " + dump(pageFormat));
+                g2d.drawString("ProjectHeist", 3, 30);
+                g2d.drawString("Naam", 0, 5);
                 result = PAGE_EXISTS;    
             }    
             return result;    
