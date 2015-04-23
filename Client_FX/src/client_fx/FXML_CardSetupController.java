@@ -32,6 +32,7 @@ public class FXML_CardSetupController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    private boolean written = false;
     @FXML
     private ComboBox<String> banks;
     @FXML
@@ -57,17 +58,7 @@ public class FXML_CardSetupController implements Initializable {
             data[i++] = (byte)number.getText().charAt(j++);
         }
         KeyPadListener.getListener().WriteDataToCard(data);
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    nextWindow("FXML_HomePage.fxml");
-                } catch (IOException ex) {
-                    Logger.getLogger(FXML_CardSetupController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
+        written = true;
     }
     
     public void nextWindow(String document) throws IOException{
@@ -82,6 +73,28 @@ public class FXML_CardSetupController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         banks.getItems().add("PROH");
+        try {
+            KeyPadListener.getListener().setCardSwipedListener(new CardSwipeListener() {
+                
+                @Override
+                public void CardSwiped(String rekeningnummer) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if(written){
+                                    nextWindow("FXML_HomePage.fxml");
+                                }
+                            } catch (IOException ex) {
+                                Logger.getLogger(FXML_CardSetupController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                }
+            });
+        } catch (Exception ex) {
+            Logger.getLogger(FXML_CardSetupController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }    
     
 }
