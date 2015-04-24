@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -32,6 +33,8 @@ public class FXML_BalanceController implements Initializable {
     
      @FXML
     private AnchorPane pane;
+    @FXML
+    private Label balanceLabel;
     
     
     public void nextWindow(String document) throws IOException{
@@ -47,6 +50,9 @@ public class FXML_BalanceController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            String rekeningnummer = KeyPadListener.getListener().getAccountID().substring(4);
+            long balance = ApiClient.getApiClient().getBalance(rekeningnummer);
+            balanceLabel.setText(String.format("Uw saldo\t\t\t€%.2f",(1.0* balance/ 100)));
             // TODO
             KeyPadListener.getListener().setKeyPressedListener(new ButtonPressedListener() {
                 
