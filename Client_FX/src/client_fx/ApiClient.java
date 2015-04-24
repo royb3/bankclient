@@ -7,7 +7,6 @@ package client_fx;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
@@ -70,5 +69,30 @@ public class ApiClient {
         }
         throw new Exception("Problem communicating with the server...");
     }
-    
+    public long getMaximumWithdraw(String rekeningnummer) throws Exception{
+        {
+            HttpURLConnection connection;
+            try {
+                connection = new HttpURLConnection(new URL(String.format("%smaximum_withdraw/%s", host, rekeningnummer)), Proxy.NO_PROXY);
+                if(connection.getResponseCode() == 200){
+                    InputStream is = connection.getInputStream();
+                    String response = "";
+                    byte[] buffer = new byte[1024];
+                    while(is.available() > 0)
+                    {
+                        int read = is.read(buffer);
+                        for(int i = 0; i < read; i++){
+                            response += (char)buffer[i];
+                        }
+                    }
+                    return Long.parseLong(response);
+                }
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        throw new Exception("Problem communicating with the server...");
+    }
 }
