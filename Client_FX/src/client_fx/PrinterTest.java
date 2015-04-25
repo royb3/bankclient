@@ -1,35 +1,35 @@
 package client_fx;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.print.*;
 
 public class PrinterTest {
 
-    public PrinterTest(){
+    public PrinterTest() {
 
         PrinterJob pj = PrinterJob.getPrinterJob();
         if (pj.printDialog()) {
             PageFormat pf = pj.defaultPage();
-            Paper paper = pf.getPaper();    
+            Paper paper = pf.getPaper();
             double width = fromCMToPPI(5);
-            double height = fromCMToPPI(10);    
+            double height = fromCMToPPI(9.5);
             paper.setSize(width, height);
             paper.setImageableArea(
-                            fromCMToPPI(0.5), 
-                            fromCMToPPI(1), 
-                            width - fromCMToPPI(0.35), 
-                            height - fromCMToPPI(1));                
-            System.out.println("Before- " + dump(paper));    
+                    fromCMToPPI(0.5),
+                    fromCMToPPI(0.1),
+                    width - fromCMToPPI(0.5),
+                    height - fromCMToPPI(1));
+            System.out.println("Before- " + dump(paper));
             pf.setOrientation(PageFormat.PORTRAIT);
-            pf.setPaper(paper);    
+            pf.setPaper(paper);
             System.out.println("After- " + dump(paper));
-            System.out.println("After- " + dump(pf));                
-            dump(pf);    
+            System.out.println("After- " + dump(pf));
+            dump(pf);
             PageFormat validatePage = pj.validatePage(pf);
-            System.out.println("Valid- " + dump(validatePage));                
+            System.out.println("Valid- " + dump(validatePage));
             //Book book = new Book();
             //book.append(new MyPrintable(), pf);
             //pj.setPageable(book);    
@@ -38,47 +38,55 @@ public class PrinterTest {
                 pj.print();
             } catch (PrinterException ex) {
                 ex.printStackTrace();
-            }    
-        }    
+            }
+        }
     }
 
-    protected static double fromCMToPPI(double cm) {            
-        return toPPI(cm * 0.393700787);            
+    protected static double fromCMToPPI(double cm) {
+        return toPPI(cm * 0.393700787);
     }
 
-    protected static double toPPI(double inch) {            
-        return inch * 72d;            
+    protected static double toPPI(double inch) {
+        return inch * 72d;
     }
 
-    protected static String dump(Paper paper) {            
+    protected static String dump(Paper paper) {
         StringBuilder sb = new StringBuilder(64);
         sb.append(paper.getWidth()).append("x").append(paper.getHeight())
-           .append("/").append(paper.getImageableX()).append("x").
-           append(paper.getImageableY()).append(" - ").append(paper
-       .getImageableWidth()).append("x").append(paper.getImageableHeight());            
-        return sb.toString();            
+                .append("/").append(paper.getImageableX()).append("x").
+                append(paper.getImageableY()).append(" - ").append(paper
+                        .getImageableWidth()).append("x").append(paper.getImageableHeight());
+        return sb.toString();
     }
 
-    protected static String dump(PageFormat pf) {    
-        Paper paper = pf.getPaper();            
-        return dump(paper);    
+    protected static String dump(PageFormat pf) {
+        Paper paper = pf.getPaper();
+        return dump(paper);
     }
 
     public static class MyPrintable implements Printable {
 
         @Override
-        public int print(Graphics graphics, PageFormat pageFormat, 
-            int pageIndex) throws PrinterException {    
-            System.out.println(pageIndex);                
-            int result = NO_SUCH_PAGE;    
-            if (pageIndex < 1) {                    
-                Graphics2D g2d = (Graphics2D) graphics;                    
+        public int print(Graphics graphics, PageFormat pageFormat,
+                int pageIndex) throws PrinterException {
+            System.out.println(pageIndex);
+            int result = NO_SUCH_PAGE;
+            if (pageIndex < 1) {
+                Graphics2D g2d = (Graphics2D) graphics;
                 System.out.println("[Print] " + dump(pageFormat));
-                g2d.drawString("ProjectHeist", 3, 30);
-                g2d.drawString("Naam", 0, 5);
-                result = PAGE_EXISTS;    
-            }    
-            return result;    
+                double width = pageFormat.getImageableWidth();
+                double height = pageFormat.getImageableHeight();
+                g2d.translate((int) pageFormat.getImageableX(),
+                        (int) pageFormat.getImageableY());
+                FontMetrics fm = g2d.getFontMetrics();
+                g2d.drawString("ProjectHeist", 10, 10);
+                g2d.setFont(new Font(g2d.getFont().getFontName(), Font.BOLD, 7));
+                g2d.drawString("Transactienummer", 10, 20);
+                g2d.drawString("Bedrag", 10, 30);
+                g2d.drawString("Datum", 10, 40);
+                result = PAGE_EXISTS;
+            }
+            return result;
         }
     }
 }
