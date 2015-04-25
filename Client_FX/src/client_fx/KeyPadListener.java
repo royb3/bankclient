@@ -17,6 +17,7 @@ public class KeyPadListener {
     private static KeyPadListener instance = null;
     private SerialPort port;
     private String accountID;
+    private String cardNumber;
     public static KeyPadListener getListener(String portName){
         if(instance == null)
         {
@@ -82,10 +83,15 @@ public class KeyPadListener {
                                 if(sub.equals("CR"))
                                 {
                                     accountID = "";
+                                    cardNumber = "";
                                     String[] hexcodes = value.substring(4).split(" ");
-                                    for(String hexcode : hexcodes){
-                                        accountID += (char)Integer.parseInt(hexcode, 16);
+                                    for(int i = 0; i < hexcodes.length - 2; i++){
+                                        accountID += (char)Integer.parseInt(hexcodes[i], 16);
                                     }
+                                    for(int i = hexcodes.length - 2; i < hexcodes.length; i++){
+                                        cardNumber += (char)Integer.parseInt(hexcodes[i], 16);
+                                    }
+                                    
                                     System.out.println(accountID);
                                     csListener.CardSwiped(accountID);
                                 }
@@ -126,4 +132,9 @@ public class KeyPadListener {
         buffer[1] = (byte) 0x7F;
         port.writeBytes(buffer);
     }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+    
 }

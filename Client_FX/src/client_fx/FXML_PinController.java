@@ -83,8 +83,20 @@ public class FXML_PinController implements Initializable {
                                 if (!hasItem(pincode, '-')) {
                                     try {
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
-                                        nextWindow();
+                                        String rekeningnummer = KeyPadListener.getListener().getAccountID().substring(4);
+                                        if(ApiClient.getApiClient().authorize(rekeningnummer, KeyPadListener.getListener().getCardNumber(), new String(pincode))){
+                                            nextWindow();
+                                        }else{
+                                            pincode = new char[]{'-','-', '-', '-'};
+                                            firstDigit.setText("O");
+                                            secondDigit.setText("O");
+                                            thirdDigit.setText("O");
+                                            fourthDigit.setText("O");
+                                            digitState = 0;
+                                        }
                                     } catch (IOException ex) {
+                                        Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
+                                    } catch (Exception ex) {
                                         Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                                 }

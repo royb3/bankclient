@@ -40,6 +40,8 @@ public class FXML_CardSetupController implements Initializable {
     @FXML
     private AnchorPane pane;
     @FXML
+    private TextField cardNumber;
+    @FXML
     private void OkButtonPressed(ActionEvent event) throws Exception{
         byte[] data = new byte[16];
         String bankCode = banks.getValue(); 
@@ -48,15 +50,17 @@ public class FXML_CardSetupController implements Initializable {
         {
             data[i] = (byte) bankCode.charAt(i++);
         }
-        int j = 16 - i - number.getText().length();
+        int j = 14 - i - number.getText().length();
         while(j-- > 0){
             data[i++] = '0';
         }
         j = 0;
-        while(i < 16)
+        while(i < 14)
         {
             data[i++] = (byte)number.getText().charAt(j++);
         }
+        data[14] = (byte)cardNumber.getText().charAt(0);
+        data[15] = (byte)cardNumber.getText().charAt(1);
         KeyPadListener.getListener().WriteDataToCard(data);
         written = true;
     }
