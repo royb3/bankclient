@@ -5,6 +5,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.print.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PrinterTest {
 
@@ -79,11 +84,17 @@ public class PrinterTest {
                 g2d.translate((int) pageFormat.getImageableX(),
                         (int) pageFormat.getImageableY());
                 FontMetrics fm = g2d.getFontMetrics();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Date date = new Date();
                 g2d.drawString("ProjectHeist", 10, 10);
                 g2d.setFont(new Font(g2d.getFont().getFontName(), Font.BOLD, 7));
-                g2d.drawString("Transactienummer", 10, 20);
-                g2d.drawString("Bedrag", 10, 30);
-                g2d.drawString("Datum", 10, 40);
+                try {
+                    g2d.drawString("Transactienummer"+Transaction.getCurrentTransaction().getID(), 10, 20);
+                    g2d.drawString("Bedrag "+Transaction.getCurrentTransaction().getAmmount(), 10, 30);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrinterTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                g2d.drawString("Datum "+dateFormat.format(date), 10, 40);
                 result = PAGE_EXISTS;
             }
             return result;

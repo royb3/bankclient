@@ -34,7 +34,7 @@ public class FXML_MoneyController implements Initializable {
     @FXML
     private Label optionA;
     @FXML
-    private  Label optionB;
+    private Label optionB;
     @FXML
     private Label optionC;
     @FXML
@@ -95,20 +95,42 @@ public class FXML_MoneyController implements Initializable {
                                     if (key == '*') {
                                         customAmount = "";
                                         customAmountLabel.setText("€0,-");
-                                    } else if(key == 'A' && optionA.getText() != ""){
-                                        if(!Transaction.transactionPending())
+                                    } else if (key == 'A' && optionA.getText() != "") {
+                                        if (!Transaction.transactionPending()) {
                                             Transaction.init();
+                                        }
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                         String optionAText = optionA.getText();
                                         Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionAText.substring(1, optionAText.length() - 2)));
-                                    }else{
+                                    } else if (key == 'B' && optionB.getText() != "") {
+                                        if (!Transaction.transactionPending()) {
+                                            Transaction.init();
+                                        }
+                                        Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                        String optionBText = optionB.getText();
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionBText.substring(1, optionBText.length() - 2)));
+                                    } else if (key == 'C' && optionC.getText() != "") {
+                                        if (!Transaction.transactionPending()) {
+                                            Transaction.init();
+                                        }
+                                        Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                        String optionCText = optionC.getText();
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionCText.substring(1, optionCText.length() - 2)));
+                                    } else if (key == 'D' && customAmountLabel.getText() != "") {
+                                        if (!Transaction.transactionPending()) {
+                                            Transaction.init();
+                                        }
+                                        Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount));
+                                    } else {
                                         customAmount += Integer.parseInt(new String(new char[]{key}));
                                         customAmountLabel.setText(String.format("€%s,-", customAmount));
                                     }
                                 }
-                                if(Transaction.transactionPending())
-                                {
-                                    if(ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getAccountID(), Transaction.getCurrentTransaction().getAmmount())){
+                                if (Transaction.transactionPending()) {
+                                    WithdrawResponse response = ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getAccountID(), Transaction.getCurrentTransaction().getAmmount());
+                                    if (response != null) {
+                                        Transaction.getCurrentTransaction().setID(response.getTransactionNumber());
                                         nextWindow("FXML_ReceiptPage.fxml");
                                     }
                                 }

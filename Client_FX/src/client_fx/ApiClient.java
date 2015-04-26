@@ -14,30 +14,32 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 import sun.net.www.protocol.http.HttpURLConnection;
-
 
 /**
  *
  * @author Roy
  */
 public class ApiClient {
+
     private static ApiClient instance = null;
     private static String host = "http://localhost:8080/";
-    
-    public static ApiClient getApiClient(){
-        if(instance == null)
+
+    public static ApiClient getApiClient() {
+        if (instance == null) {
             instance = new ApiClient();
+        }
         return instance;
     }
-    
-    public Boolean authorize(String rekeningnummer, String passnummer, String pincode){
-        try{
+
+    public Boolean authorize(String rekeningnummer, String passnummer, String pincode) {
+        try {
             HttpURLConnection connection;
-            connection = new HttpURLConnection(new URL(String.format("%sauth/%s/%s/%s", host, rekeningnummer, passnummer, pincode)),Proxy.NO_PROXY);
+            connection = new HttpURLConnection(new URL(String.format("%sauth/%s/%s/%s", host, rekeningnummer, passnummer, pincode)), Proxy.NO_PROXY);
             return (connection.getResponseCode() == 200);
-        }catch(MalformedURLException e){
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             return false;
         } catch (IOException ex) {
@@ -45,21 +47,20 @@ public class ApiClient {
             return false;
         }
     }
-    
-    public long getBalance(String rekeningnummer) throws Exception{
+
+    public long getBalance(String rekeningnummer) throws Exception {
         {
             HttpURLConnection connection;
             try {
                 connection = new HttpURLConnection(new URL(String.format("%sbalance/%s", host, rekeningnummer)), Proxy.NO_PROXY);
-                if(connection.getResponseCode() == 200){
+                if (connection.getResponseCode() == 200) {
                     InputStream is = connection.getInputStream();
                     String response = "";
                     byte[] buffer = new byte[1024];
-                    while(is.available() > 0)
-                    {
+                    while (is.available() > 0) {
                         int read = is.read(buffer);
-                        for(int i = 0; i < read; i++){
-                            response += (char)buffer[i];
+                        for (int i = 0; i < read; i++) {
+                            response += (char) buffer[i];
                         }
                     }
                     return Long.parseLong(response);
@@ -72,20 +73,20 @@ public class ApiClient {
         }
         throw new Exception("Problem communicating with the server...");
     }
-    public long getMaximumWithdraw(String rekeningnummer) throws Exception{
+
+    public long getMaximumWithdraw(String rekeningnummer) throws Exception {
         {
             HttpURLConnection connection;
             try {
                 connection = new HttpURLConnection(new URL(String.format("%smaximum_withdraw/%s", host, rekeningnummer)), Proxy.NO_PROXY);
-                if(connection.getResponseCode() == 200){
+                if (connection.getResponseCode() == 200) {
                     InputStream is = connection.getInputStream();
                     String response = "";
                     byte[] buffer = new byte[1024];
-                    while(is.available() > 0)
-                    {
+                    while (is.available() > 0) {
                         int read = is.read(buffer);
-                        for(int i = 0; i < read; i++){
-                            response += (char)buffer[i];
+                        for (int i = 0; i < read; i++) {
+                            response += (char) buffer[i];
                         }
                     }
                     return Long.parseLong(response);
@@ -98,47 +99,53 @@ public class ApiClient {
         }
         throw new Exception("Problem communicating with the server...");
     }
-    
-    public boolean withdraw(String rekeningnummer, long amout){
+
+    public WithdrawResponse withdraw(String rekeningnummer, long amout) {
         HttpURLConnection connection;
-        try{
+        try {
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setUseCaches (false);
+            connection.setUseCaches(false);
             connection.setDoInput(true);
-            connection.setDoOutput(true); 
+            connection.setDoOutput(true);
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
             JSONWriter jsonWriter = new JSONWriter(writer)
-                        .object()
-                            .key("TIBAN")
-                            .value(rekeningnummer)
-                            .key("amount")
-                            .value(amout)
-                        .endObject();
-           writer.close();
-                
+                    .object()
+                    .key("TIBAN")
+                    .value(rekeningnummer)
+                    .key("amount")
+                    .value(amout)
+                    .endObject();
+            writer.close();
+
             Logger.getGlobal().log(Level.INFO, jsonWriter.toString());
-            if(connection.getResponseCode() == 200){
-                return true;
-            }else{
-                InputStream is = connection.getInputStream();
-                String response = "";
-                byte[] buffer = new byte[1024];
-                while(is.available() > 0)
-                {
-                    int read = is.read(buffer);
-                    for(int i = 0; i < read; i++){
-                        response += (char)buffer[i];
-                    }
-                }
+            if (connection.getResponseCode() == 200) {
+                String responseString = readInputStream(connection.getInputStream());
+                JSONObject responseObject = new JSONObject(responseString);
+                WithdrawResponse response = new WithdrawResponse(responseObject);
+                return response;
+            } else {
+                String response = readInputStream(connection.getInputStream());
                 System.out.println(response);
             }
         } catch (IOException ex) {
             Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
+    }
+
+    private String readInputStream(InputStream is) throws IOException {
+        String response = "";
+        byte[] buffer = new byte[1024];
+        while (is.available() > 0) {
+            int read = is.read(buffer);
+            for (int i = 0; i < read; i++) {
+                response += (char) buffer[i];
+            }
+        }
+        return response;
     }
 }

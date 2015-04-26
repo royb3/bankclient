@@ -12,36 +12,41 @@ import java.sql.Time;
  * @author Roy
  */
 public class Transaction {
+
     private static Transaction instance;
-    
+
     private String accountID;
     private long ammount;
     private Time completionDate;
     private boolean pending;
-    
-    public static Transaction init(){
+    private int ID;
+
+    public static Transaction init() {
         instance = new Transaction();
         return instance;
     }
-    
-    public static Transaction getCurrentTransaction() throws Exception{
-        if(instance == null)
+
+    public static Transaction getCurrentTransaction() throws Exception {
+        if (instance == null) {
             throw new Exception("Exception is not initialized");
+        }
         return instance;
     }
-    
-    public static void clearTransaction(){
+
+    public static void clearTransaction() {
         instance = null;
     }
-    
-    public static boolean transactionPending(){
+
+    public static boolean transactionPending() {
         return (instance != null && instance.pending);
     }
-    public Transaction(){
+
+    public Transaction() {
         this.accountID = null;
         this.ammount = 0;
         this.completionDate = null;
         this.pending = true;
+        this.ID = 0;
     }
 
     public String getAccountID() {
@@ -67,4 +72,13 @@ public class Transaction {
     public void setCompletionDate(Time completionDate) {
         this.completionDate = completionDate;
     }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
 }
