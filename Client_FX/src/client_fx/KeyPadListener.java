@@ -46,6 +46,7 @@ public class KeyPadListener {
     {
         try{
             port = new SerialPort(serialPortName);
+            
             port.openPort();
             port.setParams(9600, 8, 1, 0);
 
@@ -106,7 +107,7 @@ public class KeyPadListener {
         }
         catch(Exception e)
         {
-
+               e.printStackTrace();
         }
     }
     

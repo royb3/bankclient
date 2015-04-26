@@ -34,7 +34,7 @@ public class FXML_MoneyController implements Initializable {
     @FXML
     private Label optionA;
     @FXML
-    private Label optionB;
+    private  Label optionB;
     @FXML
     private Label optionC;
     @FXML
@@ -95,9 +95,21 @@ public class FXML_MoneyController implements Initializable {
                                     if (key == '*') {
                                         customAmount = "";
                                         customAmountLabel.setText("€0,-");
-                                    } else {
+                                    } else if(key == 'A' && optionA.getText() != ""){
+                                        if(!Transaction.transactionPending())
+                                            Transaction.init();
+                                        Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                        String optionAText = optionA.getText();
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionAText.substring(1, optionAText.length() - 2)));
+                                    }else{
                                         customAmount += Integer.parseInt(new String(new char[]{key}));
                                         customAmountLabel.setText(String.format("€%s,-", customAmount));
+                                    }
+                                }
+                                if(Transaction.transactionPending())
+                                {
+                                    if(ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getAccountID(), Transaction.getCurrentTransaction().getAmmount())){
+                                        nextWindow("FXML_ReceiptPage.fxml");
                                     }
                                 }
                             } catch (Exception e) {

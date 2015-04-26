@@ -58,6 +58,7 @@ public class FXML_HomePageController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             KeyPadListener listener = KeyPadListener.getListener();
+  
             listener.ResetCardReader();
             listener.setCardSwipedListener(new CardSwipeListener() {
                 
