@@ -7,11 +7,14 @@ package client_fx;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONWriter;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 
@@ -94,5 +97,48 @@ public class ApiClient {
             }
         }
         throw new Exception("Problem communicating with the server...");
+    }
+    
+    public boolean withdraw(String rekeningnummer, long amout){
+        HttpURLConnection connection;
+        try{
+            connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true); 
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            JSONWriter jsonWriter = new JSONWriter(writer)
+                        .object()
+                            .key("TIBAN")
+                            .value(rekeningnummer)
+                            .key("amount")
+                            .value(amout)
+                        .endObject();
+           writer.close();
+                
+            Logger.getGlobal().log(Level.INFO, jsonWriter.toString());
+            if(connection.getResponseCode() == 200){
+                return true;
+            }else{
+                InputStream is = connection.getInputStream();
+                String response = "";
+                byte[] buffer = new byte[1024];
+                while(is.available() > 0)
+                {
+                    int read = is.read(buffer);
+                    for(int i = 0; i < read; i++){
+                        response += (char)buffer[i];
+                    }
+                }
+                System.out.println(response);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 }
