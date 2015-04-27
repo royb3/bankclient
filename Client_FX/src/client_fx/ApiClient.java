@@ -25,7 +25,7 @@ import sun.net.www.protocol.http.HttpURLConnection;
 public class ApiClient {
 
     private static ApiClient instance = null;
-    private static String host = "http://localhost:8080/";
+    private static String host = "http://projectheist.tk:8080/";
 
     public static ApiClient getApiClient() {
         if (instance == null) {

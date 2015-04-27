@@ -95,7 +95,7 @@ public class PrinterTest {
                     final int COLUMN_A = 10;
                     final int COLUMN_B = 80;
                     int row = 10;BufferedImage img = null;
-                    img = ImageIO.read(new File("Assets/logo.jpg"));
+                    img = ImageIO.read(MainApp.class.getResource("assets/logo.jpg"));
                     
                     g2d.drawImage(img,null, COLUMN_A, row); row += 40;
                     g2d.drawString("ProjectHeist", COLUMN_A, row); row+=10;
