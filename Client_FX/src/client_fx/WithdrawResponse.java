@@ -12,11 +12,12 @@ import org.json.JSONObject;
  * @author roy
  */
 public class WithdrawResponse {
-    private String response;
+    private String response = null;
     private long transactionNumber;
 
     public WithdrawResponse(JSONObject withdrawObject){
-        this.response = withdrawObject.getString("response");
+        if(!withdrawObject.isNull("response"))
+            this.response = withdrawObject.getString("response");
         this.transactionNumber = withdrawObject.getLong("transactionNumber");
     }
     

@@ -19,7 +19,7 @@ public class Transaction {
     private long ammount;
     private Time completionDate;
     private boolean pending;
-    private int ID;
+    private long ID;
 
     public static Transaction init() {
         instance = new Transaction();
@@ -73,11 +73,11 @@ public class Transaction {
         this.completionDate = completionDate;
     }
 
-    public int getID() {
+    public long getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(long ID) {
         this.ID = ID;
     }
 

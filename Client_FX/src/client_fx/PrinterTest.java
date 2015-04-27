@@ -4,19 +4,23 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.print.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 public class PrinterTest {
 
     public PrinterTest() {
 
         PrinterJob pj = PrinterJob.getPrinterJob();
-        if (pj.printDialog()) {
             PageFormat pf = pj.defaultPage();
             Paper paper = pf.getPaper();
             double width = fromCMToPPI(5);
@@ -44,7 +48,7 @@ public class PrinterTest {
             } catch (PrinterException ex) {
                 ex.printStackTrace();
             }
-        }
+        
     }
 
     protected static double fromCMToPPI(double cm) {
@@ -70,32 +74,52 @@ public class PrinterTest {
     }
 
     public static class MyPrintable implements Printable {
-
+        
+        
         @Override
         public int print(Graphics graphics, PageFormat pageFormat,
                 int pageIndex) throws PrinterException {
             System.out.println(pageIndex);
             int result = NO_SUCH_PAGE;
             if (pageIndex < 1) {
-                Graphics2D g2d = (Graphics2D) graphics;
-                System.out.println("[Print] " + dump(pageFormat));
-                double width = pageFormat.getImageableWidth();
-                double height = pageFormat.getImageableHeight();
-                g2d.translate((int) pageFormat.getImageableX(),
-                        (int) pageFormat.getImageableY());
-                FontMetrics fm = g2d.getFontMetrics();
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                Date date = new Date();
-                g2d.drawString("ProjectHeist", 10, 10);
-                g2d.setFont(new Font(g2d.getFont().getFontName(), Font.BOLD, 7));
                 try {
-                    g2d.drawString("Transactienummer"+Transaction.getCurrentTransaction().getID(), 10, 20);
-                    g2d.drawString("Bedrag "+Transaction.getCurrentTransaction().getAmmount(), 10, 30);
-                } catch (Exception ex) {
+                    Graphics2D g2d = (Graphics2D) graphics;
+                    System.out.println("[Print] " + dump(pageFormat));
+                    double width = pageFormat.getImageableWidth();
+                    double height = pageFormat.getImageableHeight();
+                    g2d.translate((int) pageFormat.getImageableX(),
+                            (int) pageFormat.getImageableY());
+                    FontMetrics fm = g2d.getFontMetrics();
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date = new Date();
+                    final int COLUMN_A = 10;
+                    final int COLUMN_B = 80;
+                    int row = 10;BufferedImage img = null;
+                    img = ImageIO.read(new File("Assets/logo.jpg"));
+                    
+                    g2d.drawImage(img,null, COLUMN_A, row); row += 40;
+                    g2d.drawString("ProjectHeist", COLUMN_A, row); row+=10;
+                    g2d.setFont(new Font(g2d.getFont().getFontName(), Font.BOLD, 7));
+                    try {
+                        g2d.drawString("Transactienummer:", COLUMN_A, row);
+                        g2d.drawString(String.format("%d", Transaction.getCurrentTransaction().getID()), COLUMN_B, row); row += 10;
+                        g2d.drawString("Bedrag:" , COLUMN_A, row);
+                        g2d.drawString(String.format("€%.2f", 1.0 * Transaction.getCurrentTransaction().getAmmount() / 100), COLUMN_B, row); row += 10;
+                        g2d.drawString("Rekeningnummer:" , COLUMN_A, row);
+                        g2d.drawString(String.format("*******%s", KeyPadListener.getListener().getAccountID().substring(11)), COLUMN_B, row); row += 10;
+                        g2d.drawString("Pasnummer:", COLUMN_A, row);
+                        g2d.drawString(KeyPadListener.getListener().getCardNumber(), COLUMN_B, row); row += 10;
+                    } catch (Exception ex) {
+                        Logger.getLogger(PrinterTest.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    g2d.drawString("Datum:", COLUMN_A, row);
+                    g2d.drawString(dateFormat.format(date), COLUMN_B - 40, row); row += 10;
+                    
+                    
+                            result = PAGE_EXISTS;
+                } catch (IOException ex) {
                     Logger.getLogger(PrinterTest.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                g2d.drawString("Datum "+dateFormat.format(date), 10, 40);
-                result = PAGE_EXISTS;
             }
             return result;
         }

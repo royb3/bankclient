@@ -91,7 +91,7 @@ public class FXML_MoneyController implements Initializable {
                         @Override
                         public void run() {
                             try {
-                                if (!(customAmount.equals("") && key == '0')) {
+                                if (!(customAmount.equals("") && (key == '0' || key == '*' || key == '#'))) {
                                     if (key == '*') {
                                         customAmount = "";
                                         customAmountLabel.setText("€0,-");
@@ -101,27 +101,27 @@ public class FXML_MoneyController implements Initializable {
                                         }
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                         String optionAText = optionA.getText();
-                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionAText.substring(1, optionAText.length() - 2)));
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionAText.substring(1, optionAText.length() - 2)) * 100);
                                     } else if (key == 'B' && optionB.getText() != "") {
                                         if (!Transaction.transactionPending()) {
                                             Transaction.init();
                                         }
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                         String optionBText = optionB.getText();
-                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionBText.substring(1, optionBText.length() - 2)));
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionBText.substring(1, optionBText.length() - 2)) * 100);
                                     } else if (key == 'C' && optionC.getText() != "") {
                                         if (!Transaction.transactionPending()) {
                                             Transaction.init();
                                         }
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                         String optionCText = optionC.getText();
-                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionCText.substring(1, optionCText.length() - 2)));
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionCText.substring(1, optionCText.length() - 2)) * 100);
                                     } else if (key == 'D' && customAmountLabel.getText() != "") {
                                         if (!Transaction.transactionPending()) {
                                             Transaction.init();
                                         }
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
-                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount));
+                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount) * 100);
                                     } else {
                                         customAmount += Integer.parseInt(new String(new char[]{key}));
                                         customAmountLabel.setText(String.format("€%s,-", customAmount));
