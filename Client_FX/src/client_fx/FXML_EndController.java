@@ -39,6 +39,7 @@ public class FXML_EndController implements Initializable {
             @Override
             public void run() {
                 try {
+                    Transaction.clearTransaction();
                     Thread.sleep(2500);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(FXML_EndController.class.getName()).log(Level.SEVERE, null, ex);

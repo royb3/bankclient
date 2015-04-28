@@ -59,14 +59,10 @@ public class FXML_ReceiptController implements Initializable {
                                 switch(key)
                                 {
                                     case 'A':
+                                        PrinterTest p = new PrinterTest();
                                         nextWindow("FXML_EndPage.fxml");
-                                        //onthoudKeuzeVoorReceipt();
                                         break;
                                     case 'B':
-                                        nextWindow("FXML_EndPage.fxml");
-                                        //onthoudKeuzeVoorReceipt();
-                                        break;
-                                    case 'C':
                                         nextWindow("FXML_EndPage.fxml");
                                         //onthoudKeuzeVoorReceipt();
                                         break;
