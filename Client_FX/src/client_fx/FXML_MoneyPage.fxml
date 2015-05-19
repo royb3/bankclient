@@ -67,5 +67,6 @@
          </font>
       </Label>
       <Label layoutX="155.0" layoutY="304.0" text="Typ een bedrag in op het keypad.   Zet waarde terug met *" />
+      <Label id="foutmelding" fx:id="foutmelding" layoutX="346.0" layoutY="329.0" text="Geef een 5-voudig getal a.u.b." textFill="RED" />
    </children>
 </AnchorPane>

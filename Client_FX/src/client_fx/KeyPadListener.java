@@ -58,7 +58,7 @@ public class KeyPadListener {
                         String[][] table = new String[][]{{"D", "#", "0", "*"},{"C", "9", "8", "7"},{"B", "6", "5", "4"},{"A", "3", "2", "1"}};
                         Thread.sleep(100);
                         String value = port.readString();
-                        System.out.print(value);
+                        System.out.println("received: " + value);
                         if(value != null)
                         {
                             value = value.trim();

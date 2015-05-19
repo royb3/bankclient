@@ -30,6 +30,8 @@ public class FXML_MoneyController implements Initializable {
      * @throws IOException
      */
     @FXML
+    private Label foutmelding;
+    @FXML
     private AnchorPane pane;
     @FXML
     private Label optionA;
@@ -52,27 +54,28 @@ public class FXML_MoneyController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        foutmelding.setVisible(false);
         try {
             String rekeningnummer = KeyPadListener.getListener().getAccountID().substring(4);
             double maximumWithdraw = ApiClient.getApiClient().getMaximumWithdraw(rekeningnummer);
-            if (maximumWithdraw > 100000) {
+            if (maximumWithdraw >= 100000) {
                 optionA.setText("€20,-");
                 optionB.setText("€50,-");
                 optionC.setText("€100,-");
-            } else if (maximumWithdraw > 10000) {
+            } else if (maximumWithdraw >= 10000) {
                 optionA.setText("€10,-");
                 optionB.setText("€20,-");
                 optionC.setText("€50,-");
-            } else if (maximumWithdraw > 5000) {
-                optionA.setText("€10,-");
-                optionB.setText("€20,-");
-                optionC.setText("");
-            } else if (maximumWithdraw > 1000) {
-                optionA.setText("€10,-");
-                optionB.setText("");
+            } else if (maximumWithdraw >= 5000) {
+                optionA.setText("€5,-");
+                optionB.setText("€10,-");
+                optionC.setText("€20,-");
+            } else if (maximumWithdraw >= 1000) {
+                optionA.setText("€5,-");
+                optionB.setText("€10,-");
                 optionC.setText("");
             } else if (maximumWithdraw < 1000) {
-                optionA.setText("");
+                optionA.setText("€5,-");
                 optionB.setText("");
                 optionC.setText("");
             }
@@ -116,12 +119,22 @@ public class FXML_MoneyController implements Initializable {
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                         String optionCText = optionC.getText();
                                         Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionCText.substring(1, optionCText.length() - 2)) * 100);
-                                    } else if (key == 'D' && customAmountLabel.getText() != "") {
-                                        if (!Transaction.transactionPending()) {
-                                            Transaction.init();
+                                    } else if (key == 'D'){
+                                        if (customAmount != "")  {
+                                            if (Integer.parseInt(customAmount) % 5 == 0) {
+                                                if (!Transaction.transactionPending()) {
+                                                    Transaction.init();
+                                                }
+                                                Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                                Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount) * 100);
+                                            } else {
+                                                foutmelding.setText("Het bedrag is geen veelvoud van 5!");
+                                                foutmelding.setVisible(true);
+                                            }
+                                        } else {
+                                            foutmelding.setText("U moet een bedrag invullen!");
+                                            foutmelding.setVisible(true);
                                         }
-                                        Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
-                                        Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount) * 100);
                                     } else {
                                         customAmount += Integer.parseInt(new String(new char[]{key}));
                                         customAmountLabel.setText(String.format("€%s,-", customAmount));
