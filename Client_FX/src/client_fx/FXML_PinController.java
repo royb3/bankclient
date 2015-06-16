@@ -42,11 +42,11 @@ public class FXML_PinController implements Initializable {
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
-        nextWindow();
+        nextWindow("FXML_OptionPage.fxml");
     }
 
-    private void nextWindow() throws IOException {
-        Parent home_page_parent = FXMLLoader.load(getClass().getResource("FXML_OptionPage.fxml"));
+    private void nextWindow(String name) throws IOException {
+        Parent home_page_parent = FXMLLoader.load(getClass().getResource(name));
         Scene home_page_scene = new Scene(home_page_parent);
         Stage app_stage = (Stage) firstDigit.getScene().getWindow();
         app_stage.hide();
@@ -83,41 +83,45 @@ public class FXML_PinController implements Initializable {
                                 if (!hasItem(pincode, '-')) {
                                     try {
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
-                                        String rekeningnummer = KeyPadListener.getListener().getAccountID().substring(4);
-                                        if(ApiClient.getApiClient().authorize(rekeningnummer, KeyPadListener.getListener().getCardNumber(), new String(pincode))){
-                                            nextWindow();
-                                        }else{
-                                            pincode = new char[]{'-','-', '-', '-'};
-                                            firstDigit.setText("O");
-                                            secondDigit.setText("O");
-                                            thirdDigit.setText("O");
-                                            fourthDigit.setText("O");
-                                            digitState = 0;
-                                        }
+                                        nextWindow( "FXML_OptionPage.fxml");
                                     } catch (IOException ex) {
                                         Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
-                                    } catch (Exception ex) {
-                                        Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
+                                    
                                     }
                                 }
+                            }else if(character=='*') {
+                                
+                                try{
+                                    nextWindow("FXML_HomePage.fxml");
+                                }catch(IOException ex){
+                                    Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null,ex);
+                                }  
+                                
+                                
+                                
                             }else{
                                 switch (digitState) {
                                     case 0:
                                         firstDigit.setText("X");
-                                        pincode[0] = key;
+                                        pincode[0]=key;
                                         break;
+                                    
                                     case 1:
                                         secondDigit.setText("X");
-                                        pincode[1] = key;
+                                        pincode[1]=key;
                                         break;
+                                      
                                     case 2:
                                         thirdDigit.setText("X");
-                                        pincode[2] = key;
+                                        pincode[2]=key;
                                         break;
+                                        
                                     case 3:
                                         fourthDigit.setText("X");
-                                        pincode[3] = key;
+                                        pincode[3]=key;
                                         break;
+                                      
+                                    
                                 }
                                 digitState++;
                             }
