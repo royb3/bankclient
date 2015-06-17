@@ -8,7 +8,6 @@ package client_fx;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
@@ -25,7 +24,36 @@ import sun.net.www.protocol.http.HttpURLConnection;
 public class ApiClient {
 
     private static ApiClient instance = null;
-    private static String host = "http://projectheist.tk:8080/";
+    private static String host;
+    
+    public static String getIdent(String kaartnummer){
+        String ident = kaartnummer.substring(4);
+        return ident;
+    }
+    
+    public static String getURL(String ident){
+        switch(ident){
+            case "PROH":
+                host = "145.24.222.156:8080/";
+                break;
+            case "ILMG":
+                host = "145.24.222.103:8080/";
+                break;
+            case "ATMB":
+                host = "145.24.222.217:8080/";
+                break;
+            case "SKER":
+                host = "145.24.222.112:8080/";
+                break;
+            case "MLBI":
+                host = "145.24.222.177:8080/";
+                break;
+            case "COPO":
+                host = "145.24.222.150:8080/";
+                break;
+        }
+        return host;
+    }
 
     public static ApiClient getApiClient() {
         if (instance == null) {
@@ -36,6 +64,7 @@ public class ApiClient {
 
     public Boolean authorize(String rekeningnummer, String passnummer, String pincode) {
         try {
+            host = getURL(getIdent(rekeningnummer));
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%sauth/%s/%s/%s", host, rekeningnummer, passnummer, pincode)), Proxy.NO_PROXY);
             return (connection.getResponseCode() == 200);
@@ -50,6 +79,7 @@ public class ApiClient {
 
     public long getBalance(String rekeningnummer) throws Exception {
         {
+            host = getURL(getIdent(rekeningnummer));
             HttpURLConnection connection;
             try {
                 connection = new HttpURLConnection(new URL(String.format("%sbalance/%s", host, rekeningnummer)), Proxy.NO_PROXY);
@@ -76,6 +106,7 @@ public class ApiClient {
 
     public long getMaximumWithdraw(String rekeningnummer) throws Exception {
         {
+            host = getURL(getIdent(rekeningnummer));
             HttpURLConnection connection;
             try {
                 connection = new HttpURLConnection(new URL(String.format("%smaximum_withdraw/%s", host, rekeningnummer)), Proxy.NO_PROXY);
@@ -100,7 +131,8 @@ public class ApiClient {
         throw new Exception("Problem communicating with the server...");
     }
 
-    public WithdrawResponse withdraw(String rekeningnummer, long amout) {
+    public WithdrawResponse withdraw(String rekeningnummer, long amount) {
+        host = getURL(getIdent(rekeningnummer));
         HttpURLConnection connection;
         try {
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
@@ -115,7 +147,7 @@ public class ApiClient {
                     .key("TIBAN")
                     .value(rekeningnummer)
                     .key("amount")
-                    .value(amout)
+                    .value(amount)
                     .endObject();
             writer.close();
 
