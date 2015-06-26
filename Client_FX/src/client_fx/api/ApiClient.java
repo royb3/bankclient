@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_fx;
+package client_fx.api;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -15,6 +17,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.json.JSONWriter;
 import sun.net.www.protocol.http.HttpURLConnection;
 
@@ -25,7 +28,7 @@ import sun.net.www.protocol.http.HttpURLConnection;
 public class ApiClient {
 
     private static ApiClient instance = null;
-    private static String host = "http://projectheist.tk:8080/";
+    private static String host = "http://localhost/";
 
     public static ApiClient getApiClient() {
         if (instance == null) {
@@ -34,11 +37,41 @@ public class ApiClient {
         return instance;
     }
 
-    public Boolean authorize(String rekeningnummer, String passnummer, String pincode) {
+    public Boolean authorize(String rekeningnummer, String pincode) {
         try {
             HttpURLConnection connection;
-            connection = new HttpURLConnection(new URL(String.format("%sauth/%s/%s/%s", host, rekeningnummer, passnummer, pincode)), Proxy.NO_PROXY);
-            return (connection.getResponseCode() == 200);
+            connection = new HttpURLConnection(new URL(String.format("%slogin", host)), Proxy.NO_PROXY);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setUseCaches(true);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            
+            LoginRequest request = new LoginRequest();
+            request.setPin(pincode);
+            request.setCardId(rekeningnummer);
+            
+            JSONObject object = new JSONObject(request);
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write(object.toString());
+            writer.close();
+            int responsecode = connection.getResponseCode();
+            if (responsecode == 200){
+                InputStream is = connection.getInputStream();
+                String response = "";
+                byte[] buffer = new byte[1024];
+                while (is.available() > 0) {
+                    int read = is.read(buffer);
+                    for (int i = 0; i < read; i++) {
+                        response += (char) buffer[i];
+                    }
+                }
+                
+                LoginResponse responseObject = new ObjectMapper().readValue(response, LoginResponse.class);
+                return (responseObject.getSuccess() != null);
+            }
+            System.out.println(responsecode);
+            
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return false;
@@ -46,6 +79,7 @@ public class ApiClient {
             Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+        return false;
     }
 
     public long getBalance(String rekeningnummer) throws Exception {

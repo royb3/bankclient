@@ -5,6 +5,7 @@
  */
 package client_fx;
 
+import client_fx.api.ApiClient;
 import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;

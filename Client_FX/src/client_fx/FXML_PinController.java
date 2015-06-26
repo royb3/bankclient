@@ -5,6 +5,7 @@
  */
 package client_fx;
 
+import client_fx.api.ApiClient;
 import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
@@ -46,7 +47,7 @@ public class FXML_PinController implements Initializable {
     }
 
     private void nextWindow(String name) throws IOException {
-        Parent home_page_parent = FXMLLoader.load(getClass().getResource(name));
+        Parent home_page_parent = FXMLLoader.load(getClass().getResource("FXML_OptionPage.fxml"));
         Scene home_page_scene = new Scene(home_page_parent);
         Stage app_stage = (Stage) firstDigit.getScene().getWindow();
         app_stage.hide();
@@ -80,10 +81,29 @@ public class FXML_PinController implements Initializable {
                         @Override
                         public void run() {
                             if (character == '#') {
+                                String rekeningnummer = null;
+                                try {
+                                    rekeningnummer = KeyPadListener.getListener().getAccountID();
+                                } catch (Exception ex) {
+                                    Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
                                 if (!hasItem(pincode, '-')) {
                                     try {
+                                        if (ApiClient.getApiClient().authorize(rekeningnummer, new String(pincode))) {
+                                            nextWindow("FXML_OptionPage.fxml");
+
+                                        } else {
+                                            pincode = new char[]{'-', '-', '-', '-'};
+                                            firstDigit.setText("O");
+                                            secondDigit.setText("O");
+                                            thirdDigit.setText("O");
+                                            fourthDigit.setText("O");
+                                            digitState = 0;
+
+                                        }
+
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
-                                        nextWindow("FXML_OptionPage.fxml");
                                     } catch (IOException ex) {
                                         Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -128,7 +148,7 @@ public class FXML_PinController implements Initializable {
                 }
             });
         } catch (Exception e) {
-
+            System.out.println("Keypad not found");
         }
     }
 

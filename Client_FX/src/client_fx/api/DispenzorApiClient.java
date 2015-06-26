@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_fx;
+package client_fx.api;
 
 import java.io.IOException;
 import java.net.Proxy;

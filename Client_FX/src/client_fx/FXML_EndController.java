@@ -5,6 +5,7 @@
  */
 package client_fx;
 
+import client_fx.api.DispenzorApiClient;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
