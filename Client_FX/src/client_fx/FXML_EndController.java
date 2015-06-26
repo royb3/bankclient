@@ -5,7 +5,6 @@
  */
 package client_fx;
 
-import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,7 +14,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -39,9 +37,36 @@ public class FXML_EndController implements Initializable {
             @Override
             public void run() {
                 try {
+                    long amount = Transaction.getCurrentTransaction().getAmmount();
+                    long brief = amount / 5000;
+                    amount-= brief * 5000;
+                    for(int i = 0; i < brief; i++){
+                        DispenzorApiClient.shootMoney("D");
+                        Thread.sleep(2000);
+                    }
+                    brief = amount / 2000;
+                    amount-= brief * 2000;
+                    for(int i = 0; i < brief; i++){
+                        DispenzorApiClient.shootMoney("C");
+                        Thread.sleep(2000);
+                    }
+                    brief = amount / 1000;
+                    amount-= brief * 1000;
+                    for(int i = 0; i < brief; i++){
+                        DispenzorApiClient.shootMoney("B");
+                        Thread.sleep(2000);
+                    }
+                    brief = amount / 500;
+                    amount-= brief * 500;
+                    for(int i = 0; i < brief; i++){
+                        DispenzorApiClient.shootMoney("A");
+                        Thread.sleep(2000);
+                    }
                     Transaction.clearTransaction();
                     Thread.sleep(2500);
                 } catch (InterruptedException ex) {
+                    Logger.getLogger(FXML_EndController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     Logger.getLogger(FXML_EndController.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 Platform.runLater(new Runnable() {

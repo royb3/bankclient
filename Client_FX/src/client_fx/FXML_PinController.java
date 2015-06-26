@@ -83,45 +83,42 @@ public class FXML_PinController implements Initializable {
                                 if (!hasItem(pincode, '-')) {
                                     try {
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
-                                        nextWindow( "FXML_OptionPage.fxml");
+                                        nextWindow("FXML_OptionPage.fxml");
                                     } catch (IOException ex) {
                                         Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
-                                    
+
                                     }
                                 }
-                            }else if(character=='*') {
-                                
-                                try{
+                            } else if (character == '*') {
+
+                                try {
                                     nextWindow("FXML_HomePage.fxml");
-                                }catch(IOException ex){
-                                    Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null,ex);
-                                }  
-                                
-                                
-                                
-                            }else{
+                                } catch (IOException ex) {
+                                    Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
+                            } else {
                                 switch (digitState) {
                                     case 0:
                                         firstDigit.setText("X");
-                                        pincode[0]=key;
+                                        pincode[0] = key;
                                         break;
-                                    
+
                                     case 1:
                                         secondDigit.setText("X");
-                                        pincode[1]=key;
+                                        pincode[1] = key;
                                         break;
-                                      
+
                                     case 2:
                                         thirdDigit.setText("X");
-                                        pincode[2]=key;
+                                        pincode[2] = key;
                                         break;
-                                        
+
                                     case 3:
                                         fourthDigit.setText("X");
-                                        pincode[3]=key;
+                                        pincode[3] = key;
                                         break;
-                                      
-                                    
+
                                 }
                                 digitState++;
                             }
