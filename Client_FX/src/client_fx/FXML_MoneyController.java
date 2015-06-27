@@ -7,7 +7,6 @@ package client_fx;
 
 import client_fx.api.WithdrawResponse;
 import client_fx.api.ApiClient;
-import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,7 +16,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -97,9 +95,11 @@ public class FXML_MoneyController implements Initializable {
                         public void run() {
                             try {
                                 if (!(customAmount.equals("") && (key == '0' || key == '*' || key == '#'))) {
-                                    if (key == '*') {
+                                    if (key == '#') {
                                         customAmount = "";
                                         customAmountLabel.setText("€0,-");
+                                    } else if (key == '*') {
+                                        nextWindow("FXML_OptionPage.fxml");
                                     } else if (key == 'A' && optionA.getText() != "") {
                                         if (!Transaction.transactionPending()) {
                                             Transaction.init();
@@ -121,8 +121,8 @@ public class FXML_MoneyController implements Initializable {
                                         Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                         String optionCText = optionC.getText();
                                         Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionCText.substring(1, optionCText.length() - 2)) * 100);
-                                    } else if (key == 'D'){
-                                        if (customAmount != "")  {
+                                    } else if (key == 'D') {
+                                        if (customAmount != "") {
                                             if (Integer.parseInt(customAmount) % 5 == 0) {
                                                 if (!Transaction.transactionPending()) {
                                                     Transaction.init();
