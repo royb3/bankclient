@@ -21,7 +21,6 @@ public class Transaction {
     private boolean pending;
     private long ID;
     private String token;
-    private String pin;
 
     public static Transaction init() {
         instance = new Transaction();
@@ -49,6 +48,7 @@ public class Transaction {
         this.completionDate = null;
         this.pending = true;
         this.ID = 0;
+        this.token = null;
     }
 
     public static Transaction getInstance() {
@@ -73,14 +73,6 @@ public class Transaction {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
     }
 
     public String getAccountID() {
