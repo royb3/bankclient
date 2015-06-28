@@ -37,6 +37,8 @@ public class FXML_PinController implements Initializable {
     private Label thirdDigit;
     @FXML
     private Label fourthDigit;
+    @FXML
+    private Label onjuistCode;
 
     private int digitState;
     private char[] pincode;
@@ -91,7 +93,14 @@ public class FXML_PinController implements Initializable {
                                 if (!hasItem(pincode, '-')) {
                                     try {
                                         if (ApiClient.getApiClient().authorize(rekeningnummer, new String(pincode))) {
+                                            if (!Transaction.transactionPending()) {
+                                                Transaction.init();
+                                            }
+                                            Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                            Transaction.getCurrentTransaction().setPin(Arrays.toString(pincode));
+                                            //Transaction.getCurrentTransaction().setToken(ApiClient.getApiClient().getToken());
                                             nextWindow("FXML_OptionPage.fxml");
+                                            onjuistCode.setVisible(false);
 
                                         } else {
                                             pincode = new char[]{'-', '-', '-', '-'};
@@ -100,13 +109,15 @@ public class FXML_PinController implements Initializable {
                                             thirdDigit.setText("O");
                                             fourthDigit.setText("O");
                                             digitState = 0;
-
+                                            onjuistCode.setVisible(true);
                                         }
 
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
                                     } catch (IOException ex) {
                                         Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
 
+                                    } catch (Exception ex) {
+                                        Logger.getLogger(FXML_PinController.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                                 }
                             } else if (character == '*') {

@@ -5,20 +5,16 @@
  */
 package client_fx.api;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 /**

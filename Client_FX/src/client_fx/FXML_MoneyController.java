@@ -143,9 +143,8 @@ public class FXML_MoneyController implements Initializable {
                                     }
                                 }
                                 if (Transaction.transactionPending()) {
-                                    WithdrawResponse response = ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getAccountID(), Transaction.getCurrentTransaction().getAmmount());
-                                    if (response != null) {
-                                        Transaction.getCurrentTransaction().setID(response.getTransactionNumber());
+                                    if (ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getToken(), Transaction.getCurrentTransaction().getAmmount())) {
+                                        //Transaction.getCurrentTransaction().setID(response.getTransactionNumber());
                                         nextWindow("FXML_ReceiptPage.fxml");
                                     }
                                 }
