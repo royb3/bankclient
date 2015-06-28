@@ -4,27 +4,6 @@
  * and open the template in the editor.
  */
 package client_fx.api;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  *
  * @author roy

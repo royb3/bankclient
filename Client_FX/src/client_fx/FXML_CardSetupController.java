@@ -78,6 +78,10 @@ public class FXML_CardSetupController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         banks.getItems().add("PROH");
         banks.getItems().add("SKER");
+        banks.getItems().add("COPO");
+        banks.getItems().add("ILMG");
+        banks.getItems().add("ATMB");
+        banks.getItems().add("MLBI");
         try {
             KeyPadListener.getListener().setCardSwipedListener(new CardSwipeListener() {
                 

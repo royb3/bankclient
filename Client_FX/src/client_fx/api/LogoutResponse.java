@@ -5,13 +5,12 @@
  */
 package client_fx.api;
 
-import org.json.JSONObject;
-
 /**
  *
- * @author roy
+ * @author Boris
  */
-public class WithdrawResponse {
+public class LogoutResponse {
+    
     private Error error;
     private Success success;
 
@@ -31,10 +30,7 @@ public class WithdrawResponse {
         this.success = success;
     }
 
-    public WithdrawResponse() {
+    public LogoutResponse() {
         super();
     }
-
-
-    
 }
