@@ -41,5 +41,10 @@
             <Font size="30.0" />
          </font>
       </Label>
+      <Label fx:id="onjuisteCode" layoutX="14.0" layoutY="333.0" text="De pincode is onjuist!" textFill="RED" visible="false">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
