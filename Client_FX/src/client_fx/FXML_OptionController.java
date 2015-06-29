@@ -26,12 +26,10 @@ public class FXML_OptionController implements Initializable {
      * @param event
      * @throws IOException
      */
-    
     @FXML
     private AnchorPane pane;
     
-    
-    public void nextWindow(String document) throws IOException{
+    public void nextWindow(String document) throws IOException {
         Parent home_page_parent = FXMLLoader.load(getClass().getResource(document));
         Scene home_page_scene = new Scene(home_page_parent);
         Stage app_stage = (Stage) pane.getScene().getWindow();
@@ -40,7 +38,6 @@ public class FXML_OptionController implements Initializable {
         app_stage.show();
     }
     
-            
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -51,18 +48,20 @@ public class FXML_OptionController implements Initializable {
                 public void buttonPressed(char character) {
                     final char key = character;
                     Platform.runLater(new Runnable() {
-
+                        
                         @Override
                         public void run() {
-                            try{
-                                switch(key)
-                                {
+                            try {
+                                switch (key) {
                                     case 'A':
                                         nextWindow("FXML_MoneyPage.fxml");
                                         break;
                                     case 'B':
-                                        nextWindow("FXML_BalancePage.fxml");
+                                        if (Transaction.getCurrentTransaction().getAccountID().contains("PROH")) {
+                                            nextWindow("FXML_BalancePage.fxml");
+                                        }
                                         break;
+                                    
                                     case 'C':
                                         nextWindow("FXML_EndPage.fxml");
                                         break;
@@ -71,6 +70,8 @@ public class FXML_OptionController implements Initializable {
                                         break;
                                 }
                             } catch (IOException ex) {
+                                Logger.getLogger(FXML_OptionController.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (Exception ex) {
                                 Logger.getLogger(FXML_OptionController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }

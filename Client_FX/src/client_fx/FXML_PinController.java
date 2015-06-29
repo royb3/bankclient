@@ -100,7 +100,6 @@ public class FXML_PinController implements Initializable {
                                                 Transaction.init();
                                             }
                                             Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
-                                            //Transaction.getCurrentTransaction().setToken(ApiClient.getApiClient().getToken());
                                             nextWindow("FXML_OptionPage.fxml");
                                             onjuisteCode.setVisible(false);
 

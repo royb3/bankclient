@@ -5,8 +5,8 @@
  */
 package client_fx.api;
 
+import client_fx.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -41,6 +41,7 @@ public class ApiClient {
             connection = new HttpURLConnection(new URL(String.format("%slogin", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("bank", rekeningnummer.substring(0,4));
             connection.setUseCaches(true);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -176,12 +177,13 @@ public class ApiClient {
         throw new Exception("Problem communicating with the server...");
     }
 
-    public boolean withdraw(String token, long amount) throws IOException {
+    public boolean withdraw(String token, long amount) throws IOException, Exception {
         try {
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("bank", Transaction.getCurrentTransaction().getAccountID());
             connection.setUseCaches(false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -217,12 +219,13 @@ public class ApiClient {
         return false;
     }
 
-    public boolean logout(String token) {
+    public boolean logout(String token) throws Exception {
         try {
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("bank", Transaction.getCurrentTransaction().getAccountID());
             connection.setUseCaches(false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
