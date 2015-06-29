@@ -33,7 +33,7 @@ public class ApiClient {
         return instance;
     }
 
-    public Boolean authorize(String rekeningnummer, String pincode) {
+    public LoginResponse authorize(String rekeningnummer, String pincode) {
         try {
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%slogin", host)), Proxy.NO_PROXY);
@@ -64,18 +64,16 @@ public class ApiClient {
                 }
 
                 LoginResponse responseObject = new ObjectMapper().readValue(response, LoginResponse.class);
-                return (responseObject.getSuccess() != null);
+                return responseObject;
             }
             System.out.println(responsecode);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            return false;
         } catch (IOException ex) {
             Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
         }
-        return false;
+        return null;
     }
 
     public long getBalance(String rekeningnummer) throws Exception {

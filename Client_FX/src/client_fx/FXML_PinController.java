@@ -6,6 +6,8 @@
 package client_fx;
 
 import client_fx.api.ApiClient;
+import client_fx.api.ErrorLogin;
+import client_fx.api.LoginResponse;
 import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
@@ -92,7 +94,8 @@ public class FXML_PinController implements Initializable {
 
                                 if (!hasItem(pincode, '-')) {
                                     try {
-                                        if (ApiClient.getApiClient().authorize(rekeningnummer, new String(pincode))) {
+                                        LoginResponse response = ApiClient.getApiClient().authorize(rekeningnummer, new String(pincode));
+                                        if (response.getSuccess() != null) {
                                             if (!Transaction.transactionPending()) {
                                                 Transaction.init();
                                             }
@@ -109,6 +112,8 @@ public class FXML_PinController implements Initializable {
                                             fourthDigit.setText("O");
                                             digitState = 0;
                                             onjuistCode.setVisible(true);
+                                            ErrorLogin err = (ErrorLogin) response.getError();
+                                            onjuistCode.setText(err.getMessage());
                                         }
 
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
