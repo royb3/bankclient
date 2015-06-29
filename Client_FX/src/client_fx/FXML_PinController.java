@@ -40,7 +40,7 @@ public class FXML_PinController implements Initializable {
     @FXML
     private Label fourthDigit;
     @FXML
-    private Label onjuistCode;
+    private Label onjuisteCode;
 
     private int digitState;
     private char[] pincode;
@@ -102,7 +102,7 @@ public class FXML_PinController implements Initializable {
                                             Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
                                             //Transaction.getCurrentTransaction().setToken(ApiClient.getApiClient().getToken());
                                             nextWindow("FXML_OptionPage.fxml");
-                                            onjuistCode.setVisible(false);
+                                            onjuisteCode.setVisible(false);
 
                                         } else {
                                             pincode = new char[]{'-', '-', '-', '-'};
@@ -111,9 +111,9 @@ public class FXML_PinController implements Initializable {
                                             thirdDigit.setText("O");
                                             fourthDigit.setText("O");
                                             digitState = 0;
-                                            onjuistCode.setVisible(true);
+                                            onjuisteCode.setVisible(true);
                                             ErrorLogin err = (ErrorLogin) response.getError();
-                                            onjuistCode.setText(err.getMessage());
+                                            onjuisteCode.setText(err.getMessage());
                                         }
 
                                         System.out.println(String.format("Digits: %s", new String(pincode)));
