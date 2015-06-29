@@ -21,7 +21,7 @@
                 <Font size="38.0" />
             </font>
         </Label>
-        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="160.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="B" textAlignment="CENTER">
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="160.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="*" textAlignment="CENTER">
             <font>
                 <Font size="30.0" />
             </font>

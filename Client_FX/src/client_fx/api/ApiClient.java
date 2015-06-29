@@ -26,6 +26,7 @@ public class ApiClient {
 
     private static ApiClient instance = null;
     private static String host = "http://localhost:8000/";
+    private String token;
 
     public static ApiClient getApiClient() {
         if (instance == null) {
@@ -68,19 +69,20 @@ public class ApiClient {
                 JSONObject errorObject = responseObject.getJSONObject("error");
                 ErrorLogin err = null;
                 Success success = null;
-                if(successObject.length() > 0) {
+                if (successObject.length() > 0) {
                     success = new Success();
                     success.setToken(successObject.getString("token"));
                 }
-                if(errorObject.length() > 0) {
+                if (errorObject.length() > 0) {
                     err = new ErrorLogin();
                     err.setCode(errorObject.getInt("code"));
-                    if(errorObject.has("failedAttempts")) {
+                    if (errorObject.has("failedAttempts")) {
                         err.setFailedAttempts(errorObject.getInt("failedAttempts"));
                     }
                     err.setMessage(errorObject.getString("message"));
                 }
                 LoginResponse loginResponse = new LoginResponse(err, success);
+                token = success.getToken();
                 return loginResponse;
             }
             System.out.println(responsecode);
@@ -93,12 +95,26 @@ public class ApiClient {
         return null;
     }
 
-    public long getBalance(String rekeningnummer) throws Exception {
+    public long getBalance() throws Exception {
         {
             HttpURLConnection connection;
             try {
-                connection = new HttpURLConnection(new URL(String.format("%sbalance/%s", host, rekeningnummer)), Proxy.NO_PROXY);
-                if (connection.getResponseCode() == 200) {
+                connection = new HttpURLConnection(new URL(String.format("%sbalance/%s", host, token)), Proxy.NO_PROXY);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setUseCaches(true);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                SaldoRequest request = new SaldoRequest();
+                request.setToken(token);
+
+                JSONObject object = new JSONObject(request);
+                OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                writer.write(object.toString());
+                writer.close();
+                int responsecode = connection.getResponseCode();
+                if (responsecode == 200) {
                     InputStream is = connection.getInputStream();
                     String response = "";
                     byte[] buffer = new byte[1024];
@@ -108,7 +124,22 @@ public class ApiClient {
                             response += (char) buffer[i];
                         }
                     }
-                    return Long.parseLong(response);
+                    JSONObject responseObject = new JSONObject(response);
+                    JSONObject successObject = responseObject.getJSONObject("success");
+                    JSONObject errorObject = responseObject.getJSONObject("error");
+                    Error err = null;
+                    SuccessSaldo success = null;
+                    if (successObject.length() > 0) {
+                        success = new SuccessSaldo();
+                        success.setSaldo(successObject.getLong("saldo"));
+                    }
+                    if (errorObject.length() > 0) {
+                        err = new Error();
+                        err.setCode(errorObject.getInt("code"));
+                        err.setMessage(errorObject.getString("message"));
+                    }
+                    SaldoResponse saldoResponse = new SaldoResponse(success,err);
+                    return saldoResponse.getSuccess().getSaldo();
                 }
             } catch (MalformedURLException ex) {
                 Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -185,8 +216,8 @@ public class ApiClient {
         }
         return false;
     }
-    
-    public boolean logout(String token){
+
+    public boolean logout(String token) {
         try {
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
@@ -216,7 +247,7 @@ public class ApiClient {
                     }
                 }
                 LogoutResponse responseObject = new ObjectMapper().readValue(response, LogoutResponse.class);
-                return responseObject.getSuccess()!=null;
+                return responseObject.getSuccess() != null;
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();

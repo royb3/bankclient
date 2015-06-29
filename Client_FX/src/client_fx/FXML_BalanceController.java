@@ -52,8 +52,8 @@ public class FXML_BalanceController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             String rekeningnummer = KeyPadListener.getListener().getAccountID().substring(4);
-            long balance = ApiClient.getApiClient().getBalance(rekeningnummer);
-            balanceLabel.setText(String.format("Uw saldo\t\t\t€%.2f",(1.0* balance/ 100)));
+                long balance = ApiClient.getApiClient().getBalance();
+                balanceLabel.setText(String.format("Uw saldo\t\t\t€%.2f",(1.0* balance/ 100)));
             // TODO
             KeyPadListener.getListener().setKeyPressedListener(new ButtonPressedListener() {
                 
@@ -67,7 +67,7 @@ public class FXML_BalanceController implements Initializable {
                             try{
                                 switch(key)
                                 {
-                                    case 'B':
+                                    case '*':
                                         nextWindow("FXML_OptionPage.fxml");
                                         break;
                                 }
