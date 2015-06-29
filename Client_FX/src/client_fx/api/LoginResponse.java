@@ -34,8 +34,9 @@ public class LoginResponse implements Serializable{
         this.success = success;
     }
 
-    public LoginResponse() {
-        super();
+    public LoginResponse(Error error, Success success) {
+        this.error = error;
+        this.success = success;
     }
 
 }

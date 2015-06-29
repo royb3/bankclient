@@ -6,6 +6,7 @@
 package client_fx.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -24,7 +25,7 @@ import sun.net.www.protocol.http.HttpURLConnection;
 public class ApiClient {
 
     private static ApiClient instance = null;
-    private static String host = "http://localhost/";
+    private static String host = "http://localhost:8000/";
 
     public static ApiClient getApiClient() {
         if (instance == null) {
@@ -62,9 +63,25 @@ public class ApiClient {
                         response += (char) buffer[i];
                     }
                 }
-
-                LoginResponse responseObject = new ObjectMapper().readValue(response, LoginResponse.class);
-                return responseObject;
+                JSONObject responseObject = new JSONObject(response);
+                JSONObject successObject = responseObject.getJSONObject("success");
+                JSONObject errorObject = responseObject.getJSONObject("error");
+                ErrorLogin err = null;
+                Success success = null;
+                if(successObject.length() > 0) {
+                    success = new Success();
+                    success.setToken(successObject.getString("token"));
+                }
+                if(errorObject.length() > 0) {
+                    err = new ErrorLogin();
+                    err.setCode(errorObject.getInt("code"));
+                    if(errorObject.has("failedAttempts")) {
+                        err.setFailedAttempts(errorObject.getInt("failedAttempts"));
+                    }
+                    err.setMessage(errorObject.getString("message"));
+                }
+                LoginResponse loginResponse = new LoginResponse(err, success);
+                return loginResponse;
             }
             System.out.println(responsecode);
 
