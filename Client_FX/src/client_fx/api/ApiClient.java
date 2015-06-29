@@ -56,15 +56,7 @@ public class ApiClient {
             writer.close();
             int responsecode = connection.getResponseCode();
             if (responsecode == 200) {
-                InputStream is = connection.getInputStream();
-                String response = "";
-                byte[] buffer = new byte[1024];
-                while (is.available() > 0) {
-                    int read = is.read(buffer);
-                    for (int i = 0; i < read; i++) {
-                        response += (char) buffer[i];
-                    }
-                }
+                String response = readInputStream(connection.getInputStream());
                 JSONObject responseObject = new JSONObject(response);
                 JSONObject successObject = responseObject.getJSONObject("success");
                 JSONObject errorObject = responseObject.getJSONObject("error");
@@ -116,15 +108,7 @@ public class ApiClient {
                 writer.close();
                 int responsecode = connection.getResponseCode();
                 if (responsecode == 200) {
-                    InputStream is = connection.getInputStream();
-                    String response = "";
-                    byte[] buffer = new byte[1024];
-                    while (is.available() > 0) {
-                        int read = is.read(buffer);
-                        for (int i = 0; i < read; i++) {
-                            response += (char) buffer[i];
-                        }
-                    }
+                    String response = readInputStream(connection.getInputStream());
                     JSONObject responseObject = new JSONObject(response);
                     JSONObject successObject = responseObject.getJSONObject("success");
                     JSONObject errorObject = responseObject.getJSONObject("error");
@@ -157,15 +141,7 @@ public class ApiClient {
             try {
                 connection = new HttpURLConnection(new URL(String.format("%smaximum_withdraw/%s", host, rekeningnummer)), Proxy.NO_PROXY);
                 if (connection.getResponseCode() == 200) {
-                    InputStream is = connection.getInputStream();
-                    String response = "";
-                    byte[] buffer = new byte[1024];
-                    while (is.available() > 0) {
-                        int read = is.read(buffer);
-                        for (int i = 0; i < read; i++) {
-                            response += (char) buffer[i];
-                        }
-                    }
+                    String response = readInputStream(connection.getInputStream());
                     return Long.parseLong(response);
                 }
             } catch (MalformedURLException ex) {
@@ -199,15 +175,7 @@ public class ApiClient {
             int responsecode = connection.getResponseCode();
 
             if (responsecode == 200) {
-                InputStream is = connection.getInputStream();
-                String response = "";
-                byte[] buffer = new byte[1024];
-                while (is.available() > 0) {
-                    int read = is.read(buffer);
-                    for (int i = 0; i < read; i++) {
-                        response += (char) buffer[i];
-                    }
-                }
+                String response = readInputStream(connection.getInputStream());
                 WithdrawResponse responseObject = new ObjectMapper().readValue(response, WithdrawResponse.class);
                 return (responseObject.getSuccess() != null);
             }
@@ -240,15 +208,7 @@ public class ApiClient {
             int responsecode = connection.getResponseCode();
 
             if (responsecode == 200) {
-                InputStream is = connection.getInputStream();
-                String response = "";
-                byte[] buffer = new byte[1024];
-                while (is.available() > 0) {
-                    int read = is.read(buffer);
-                    for (int i = 0; i < read; i++) {
-                        response += (char) buffer[i];
-                    }
-                }
+                String response = readInputStream(connection.getInputStream());
                 LogoutResponse responseObject = new ObjectMapper().readValue(response, LogoutResponse.class);
                 return responseObject.getSuccess() != null;
             }
