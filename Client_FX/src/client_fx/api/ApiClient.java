@@ -200,7 +200,7 @@ public class ApiClient {
                         response += (char) buffer[i];
                     }
                 }
-                WithdrawResponse responseObject = new ObjectMapper().readValue(response, WithdrawResponse.class);
+                LogoutResponse responseObject = new ObjectMapper().readValue(response, LogoutResponse.class);
                 return responseObject.getSuccess()!=null;
             }
         } catch (MalformedURLException e) {
