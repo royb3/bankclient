@@ -41,6 +41,12 @@ public class FXML_MoneyController implements Initializable {
     private Label optionC;
     @FXML
     private Label customAmountLabel;
+    @FXML
+    private Label SignA;
+    @FXML
+    private Label SignB;
+    @FXML
+    private Label SignC;
     private String customAmount = "";
 
     public void nextWindow(String document) throws IOException {
@@ -57,7 +63,7 @@ public class FXML_MoneyController implements Initializable {
         foutmelding.setVisible(false);
         try {
             String rekeningnummer = KeyPadListener.getListener().getAccountID().substring(4);
-            double maximumWithdraw = ApiClient.getApiClient().getMaximumWithdraw(rekeningnummer);
+            double maximumWithdraw = ApiClient.getApiClient().getBalance();
             if (maximumWithdraw >= 100000) {
                 optionA.setText("€20,-");
                 optionB.setText("€50,-");
@@ -83,11 +89,20 @@ public class FXML_MoneyController implements Initializable {
             Logger.getLogger(FXML_MoneyController.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
+            if(!KeyPadListener.getListener().getAccountID().substring(0, 4).equals("PROH")){
+                optionA.setVisible(false);
+                optionB.setVisible(false);
+                optionC.setVisible(false);
+                SignA.setVisible(false);
+                SignB.setVisible(false);
+                SignC.setVisible(false);
+            }
             // TODO
             KeyPadListener.getListener().setKeyPressedListener(new ButtonPressedListener() {
 
                 @Override
                 public void buttonPressed(char character) {
+                    
                     final char key = character;
                     Platform.runLater(new Runnable() {
 
@@ -122,13 +137,16 @@ public class FXML_MoneyController implements Initializable {
                                         String optionCText = optionC.getText();
                                         Transaction.getCurrentTransaction().setAmmount(Long.parseLong(optionCText.substring(1, optionCText.length() - 2)) * 100);
                                     } else if (key == 'D') {
-                                        if (customAmount != "") {
+                                        if (!customAmount.equals("")) {
                                             if (Integer.parseInt(customAmount) % 5 == 0) {
                                                 if (!Transaction.transactionPending()) {
                                                     Transaction.init();
                                                 }
                                                 Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                                if(KeyPadListener.getListener().getAccountID().substring(0, 4).equals("PROH"))
                                                 Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount) * 100);
+                                                else
+                                                    Transaction.getCurrentTransaction().setAmmount(Long.parseLong(customAmount));
                                             } else {
                                                 foutmelding.setText("Het bedrag is geen veelvoud van 5!");
                                                 foutmelding.setVisible(true);
@@ -143,9 +161,13 @@ public class FXML_MoneyController implements Initializable {
                                     }
                                 }
                                 if (Transaction.transactionPending()) {
-                                    if (ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getToken(), Transaction.getCurrentTransaction().getAmmount())) {
+                                    WithdrawResponse r = ApiClient.getApiClient().withdraw(Transaction.getCurrentTransaction().getAmmount());
+                                    if (r.getSuccessWithdraw()!= null) {
                                         //Transaction.getCurrentTransaction().setID(response.getTransactionNumber());
                                         nextWindow("FXML_ReceiptPage.fxml");
+                                    } else {
+                                        foutmelding.setText(r.getError().getMessage());
+                                        foutmelding.setVisible(true);
                                     }
                                 }
                             } catch (Exception e) {

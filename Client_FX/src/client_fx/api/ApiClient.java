@@ -13,10 +13,12 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import sun.net.www.protocol.http.HttpURLConnection;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -25,7 +27,7 @@ import sun.net.www.protocol.http.HttpURLConnection;
 public class ApiClient {
 
     private static ApiClient instance = null;
-    private static String host = "http://localhost:8000/";
+    private static String host = "http://145.24.222.156:8000/";
     private String token;
 
     public static ApiClient getApiClient() {
@@ -37,23 +39,20 @@ public class ApiClient {
 
     public LoginResponse authorize(String rekeningnummer, String pincode) {
         try {
+            String query = String.format("cardId=%s&pin=%s", URLEncoder.encode(rekeningnummer, "UTF-8"), URLEncoder.encode(pincode, "UTF-8"));
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%slogin", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("bank", rekeningnummer.substring(0,4));
+            connection.setRequestProperty("Content-Type", MediaType.APPLICATION_FORM_URLENCODED);
+            String bank = rekeningnummer.substring(0,4);
+            if(!bank.equals("PROH")) {
+                connection.setRequestProperty("bank", bank);
+            }
             connection.setUseCaches(true);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
-            LoginRequest request = new LoginRequest();
-            request.setPin(pincode);
-            request.setCardId(rekeningnummer);
-
-            JSONObject object = new JSONObject(request);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(object.toString());
-            writer.close();
+            connection.getOutputStream().write(query.getBytes());
             int responsecode = connection.getResponseCode();
             if (responsecode == 200) {
                 String response = readInputStream(connection.getInputStream());
@@ -68,14 +67,18 @@ public class ApiClient {
                 }
                 if (errorObject.length() > 0) {
                     err = new ErrorLogin();
-                    err.setCode(errorObject.getInt("code"));
+                    if(errorObject.has("code"))
+                        err.setCode(errorObject.getInt("code"));
                     if (errorObject.has("failedAttempts")) {
                         err.setFailedAttempts(errorObject.getInt("failedAttempts"));
                     }
-                    err.setMessage(errorObject.getString("message"));
+                    if(errorObject.has("message"))
+                        err.setMessage(errorObject.getString("message"));
                 }
                 LoginResponse loginResponse = new LoginResponse(err, success);
-                token = success.getToken();
+                if(success != null) {
+                    token = success.getToken();
+                }
                 return loginResponse;
             }
             System.out.println(responsecode);
@@ -92,20 +95,12 @@ public class ApiClient {
         {
             HttpURLConnection connection;
             try {
-                connection = new HttpURLConnection(new URL(String.format("%sbalance/%s", host, token)), Proxy.NO_PROXY);
+                connection = new HttpURLConnection(new URL(String.format("%sbalance", host)), Proxy.NO_PROXY);
                 connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/json");
                 connection.setUseCaches(true);
                 connection.setDoInput(true);
-                connection.setDoOutput(true);
-
-                SaldoRequest request = new SaldoRequest();
-                request.setToken(token);
-
-                JSONObject object = new JSONObject(request);
-                OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-                writer.write(object.toString());
-                writer.close();
+                connection.setRequestProperty("token", token);
+ 
                 int responsecode = connection.getResponseCode();
                 if (responsecode == 200) {
                     String response = readInputStream(connection.getInputStream());
@@ -153,65 +148,80 @@ public class ApiClient {
         throw new Exception("Problem communicating with the server...");
     }
 
-    public boolean withdraw(String token, long amount) throws IOException, Exception {
+    public WithdrawResponse withdraw(long amount) throws IOException, Exception {
         try {
+            String query = String.format("amount=%d", amount);
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("bank", Transaction.getCurrentTransaction().getAccountID());
+            connection.setRequestProperty("Content-Type", MediaType.APPLICATION_FORM_URLENCODED);
+            String bank = Transaction.getCurrentTransaction().getAccountID().substring(0,4);
+            if(!bank.equals("PROH")) {
+                connection.setRequestProperty("bank", bank);
+            }            
+            connection.setRequestProperty("token", token);
+       
             connection.setUseCaches(false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
-            WithdrawRequest request = new WithdrawRequest();
-            request.setToken(token);
-            request.setAmount(amount);
-
-            JSONObject object = new JSONObject(request);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(object.toString());
-            writer.close();
+            connection.getOutputStream().write(query.getBytes());
+            
             int responsecode = connection.getResponseCode();
 
             if (responsecode == 200) {
                 String response = readInputStream(connection.getInputStream());
-                WithdrawResponse responseObject = new ObjectMapper().readValue(response, WithdrawResponse.class);
-                return (responseObject.getSuccess() != null);
+                JSONObject responseObject = new JSONObject(response);
+                JSONObject successObject = responseObject.getJSONObject("success");
+                JSONObject errorObject = responseObject.getJSONObject("error");
+                Error err = null;
+                SuccessWithdraw success = null;
+                if (successObject.length() > 0) {
+                    success = new SuccessWithdraw();
+                    success.setCode(successObject.getInt("code"));
+                }
+                if (errorObject.length() > 0) {
+                    err = new ErrorLogin();
+                    if(errorObject.has("code"))
+                        err.setCode(errorObject.getInt("code"));
+                    
+                    if(errorObject.has("message"))
+                        err.setMessage(errorObject.getString("message"));
+                }
+                WithdrawResponse withdrawResponse = new WithdrawResponse();
+                withdrawResponse.setError(err);
+                withdrawResponse.setSuccessWithdraw(success);
+                return withdrawResponse;
+                    
+                
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException ex) {
             Logger.getLogger(ApiClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+        return null;
     }
 
-    public boolean logout(String token) throws Exception {
+    public boolean logout() throws Exception {
         try {
             HttpURLConnection connection;
             connection = new HttpURLConnection(new URL(String.format("%swithdraw", host)), Proxy.NO_PROXY);
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("bank", Transaction.getCurrentTransaction().getAccountID());
+            connection.setRequestProperty("Content-Type", MediaType.APPLICATION_FORM_URLENCODED);
+            String bank = Transaction.getCurrentTransaction().getAccountID().substring(0,4);
+            if(!bank.equals("PROH")) {
+                connection.setRequestProperty("bank", bank);
+            }       
+            connection.setRequestProperty("token", token);
             connection.setUseCaches(false);
             connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-            LogoutRequest request = new LogoutRequest();
-            request.setToken(token);
-
-            JSONObject object = new JSONObject(request);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(object.toString());
-            writer.close();
+           
             int responsecode = connection.getResponseCode();
 
-            if (responsecode == 200) {
-                String response = readInputStream(connection.getInputStream());
-                LogoutResponse responseObject = new ObjectMapper().readValue(response, LogoutResponse.class);
-                return responseObject.getSuccess() != null;
-            }
+            return (responsecode == 200) ;
+                
+            
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException ex) {

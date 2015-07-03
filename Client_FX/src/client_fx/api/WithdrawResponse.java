@@ -13,7 +13,7 @@ import org.json.JSONObject;
  */
 public class WithdrawResponse {
     private Error error;
-    private Success success;
+    private SuccessWithdraw success;
 
     public Error getError() {
         return error;
@@ -23,11 +23,11 @@ public class WithdrawResponse {
         this.error = error;
     }
 
-    public Success getSuccess() {
+    public SuccessWithdraw getSuccessWithdraw() {
         return success;
     }
 
-    public void setSuccess(Success success) {
+    public void setSuccessWithdraw(SuccessWithdraw success) {
         this.success = success;
     }
 

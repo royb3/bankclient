@@ -20,7 +20,6 @@ public class Transaction {
     private Time completionDate;
     private boolean pending;
     private long ID;
-    private String token;
 
     public static Transaction init() {
         instance = new Transaction();
@@ -48,7 +47,6 @@ public class Transaction {
         this.completionDate = null;
         this.pending = true;
         this.ID = 0;
-        this.token = null;
     }
 
     public static Transaction getInstance() {
@@ -65,14 +63,6 @@ public class Transaction {
 
     public void setPending(boolean pending) {
         this.pending = pending;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public String getAccountID() {

@@ -21,34 +21,34 @@ public class PrinterTest {
     public PrinterTest() {
 
         PrinterJob pj = PrinterJob.getPrinterJob();
-            PageFormat pf = pj.defaultPage();
-            Paper paper = pf.getPaper();
-            double width = fromCMToPPI(5);
-            double height = fromCMToPPI(9.5);
-            paper.setSize(width, height);
-            paper.setImageableArea(
-                    fromCMToPPI(0.5),
-                    fromCMToPPI(0.1),
-                    width - fromCMToPPI(0.5),
-                    height - fromCMToPPI(1));
-            System.out.println("Before- " + dump(paper));
-            pf.setOrientation(PageFormat.PORTRAIT);
-            pf.setPaper(paper);
-            System.out.println("After- " + dump(paper));
-            System.out.println("After- " + dump(pf));
-            dump(pf);
-            PageFormat validatePage = pj.validatePage(pf);
-            System.out.println("Valid- " + dump(validatePage));
+        PageFormat pf = pj.defaultPage();
+        Paper paper = pf.getPaper();
+        double width = fromCMToPPI(5);
+        double height = fromCMToPPI(9.5);
+        paper.setSize(width, height);
+        paper.setImageableArea(
+                fromCMToPPI(0.5),
+                fromCMToPPI(0.1),
+                width - fromCMToPPI(0.5),
+                height - fromCMToPPI(1));
+        System.out.println("Before- " + dump(paper));
+        pf.setOrientation(PageFormat.PORTRAIT);
+        pf.setPaper(paper);
+        System.out.println("After- " + dump(paper));
+        System.out.println("After- " + dump(pf));
+        dump(pf);
+        PageFormat validatePage = pj.validatePage(pf);
+        System.out.println("Valid- " + dump(validatePage));
             //Book book = new Book();
-            //book.append(new MyPrintable(), pf);
-            //pj.setPageable(book);    
-            pj.setPrintable(new MyPrintable(), pf);
-            try {
-                pj.print();
-            } catch (PrinterException ex) {
-                ex.printStackTrace();
-            }
-        
+        //book.append(new MyPrintable(), pf);
+        //pj.setPageable(book);    
+        pj.setPrintable(new MyPrintable(), pf);
+        try {
+            pj.print();
+        } catch (PrinterException ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     protected static double fromCMToPPI(double cm) {
@@ -74,8 +74,7 @@ public class PrinterTest {
     }
 
     public static class MyPrintable implements Printable {
-        
-        
+
         @Override
         public int print(Graphics graphics, PageFormat pageFormat,
                 int pageIndex) throws PrinterException {
@@ -94,29 +93,33 @@ public class PrinterTest {
                     Date date = new Date();
                     final int COLUMN_A = 10;
                     final int COLUMN_B = 80;
-                    int row = 10;BufferedImage img = null;
+                    int row = 10;
+                    BufferedImage img = null;
                     img = ImageIO.read(MainApp.class.getResource("assets/logo.jpg"));
-                    
-                    g2d.drawImage(img,null, COLUMN_A, row); row += 40;
-                    g2d.drawString("ProjectHeist", COLUMN_A, row); row+=10;
+
+                    g2d.drawImage(img, null, COLUMN_A, row);
+                    row += 100;
+                    g2d.drawString("ProjectHeist", COLUMN_A, row);
+                    row += 10;
                     g2d.setFont(new Font(g2d.getFont().getFontName(), Font.BOLD, 7));
                     try {
-                        g2d.drawString("Transactienummer:", COLUMN_A, row);
-                        g2d.drawString(String.format("%d", Transaction.getCurrentTransaction().getID()), COLUMN_B, row); row += 10;
-                        g2d.drawString("Bedrag:" , COLUMN_A, row);
-                        g2d.drawString(String.format("€%.2f", 1.0 * Transaction.getCurrentTransaction().getAmmount() / 100), COLUMN_B, row); row += 10;
-                        g2d.drawString("Rekeningnummer:" , COLUMN_A, row);
-                        g2d.drawString(String.format("*******%s", KeyPadListener.getListener().getAccountID().substring(11)), COLUMN_B, row); row += 10;
-                        g2d.drawString("Pasnummer:", COLUMN_A, row);
-                        g2d.drawString(KeyPadListener.getListener().getCardNumber(), COLUMN_B, row); row += 10;
+                        g2d.drawString("Bedrag:", COLUMN_A, row);
+                        if(KeyPadListener.getListener().getAccountID().substring(0, 4).equals("PROH"))
+                        g2d.drawString(String.format("€%.2f", 1.0 * Transaction.getCurrentTransaction().getAmmount()/100), COLUMN_B, row);
+                        else
+                            g2d.drawString(String.format("€%.2f", 1.0 * Transaction.getCurrentTransaction().getAmmount()), COLUMN_B, row);
+                        row += 10;
+                        g2d.drawString("Rekeningnummer:", COLUMN_A, row);
+                        g2d.drawString(String.format("*******%s", KeyPadListener.getListener().getAccountID().substring(11)), COLUMN_B, row);
+                        row += 10;
                     } catch (Exception ex) {
                         Logger.getLogger(PrinterTest.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     g2d.drawString("Datum:", COLUMN_A, row);
-                    g2d.drawString(dateFormat.format(date), COLUMN_B - 40, row); row += 10;
-                    
-                    
-                            result = PAGE_EXISTS;
+                    g2d.drawString(dateFormat.format(date), COLUMN_B - 40, row);
+                    row += 10;
+
+                    result = PAGE_EXISTS;
                 } catch (IOException ex) {
                     Logger.getLogger(PrinterTest.class.getName()).log(Level.SEVERE, null, ex);
                 }

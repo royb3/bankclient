@@ -59,8 +59,8 @@ public class FXML_CardSetupController implements Initializable {
         {
             data[i++] = (byte)number.getText().charAt(j++);
         }
-        data[14] = (byte)cardNumber.getText().charAt(0);
-        data[15] = (byte)cardNumber.getText().charAt(1);
+        data[14] = (byte)0;
+        data[15] = (byte)0;
         KeyPadListener.getListener().WriteDataToCard(data);
         written = true;
     }

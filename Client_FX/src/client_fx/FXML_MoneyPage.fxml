@@ -21,17 +21,17 @@
             <Font size="38.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="103.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="A" textAlignment="CENTER">
+      <Label fx:id="SignA" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="103.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="A" textAlignment="CENTER">
          <font>
             <Font size="30.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="160.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="B" textAlignment="CENTER">
+      <Label fx:id="SignB" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="160.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="B" textAlignment="CENTER">
          <font>
             <Font size="30.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="217.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="C" textAlignment="CENTER">
+      <Label fx:id="SignC" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="217.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black;" text="C" textAlignment="CENTER">
          <font>
             <Font size="30.0" />
          </font>

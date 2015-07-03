@@ -51,7 +51,7 @@ public class FXML_PinController implements Initializable {
     }
 
     private void nextWindow(String name) throws IOException {
-        Parent home_page_parent = FXMLLoader.load(getClass().getResource("FXML_OptionPage.fxml"));
+        Parent home_page_parent = FXMLLoader.load(getClass().getResource(name));
         Scene home_page_scene = new Scene(home_page_parent);
         Stage app_stage = (Stage) firstDigit.getScene().getWindow();
         app_stage.hide();
@@ -96,10 +96,7 @@ public class FXML_PinController implements Initializable {
                                     try {
                                         LoginResponse response = ApiClient.getApiClient().authorize(rekeningnummer, new String(pincode));
                                         if (response.getSuccess() != null) {
-                                            if (!Transaction.transactionPending()) {
-                                                Transaction.init();
-                                            }
-                                            Transaction.getCurrentTransaction().setAccountID(KeyPadListener.getListener().getAccountID());
+                                            
                                             nextWindow("FXML_OptionPage.fxml");
                                             onjuisteCode.setVisible(false);
 

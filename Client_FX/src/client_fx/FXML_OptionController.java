@@ -16,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -28,6 +29,10 @@ public class FXML_OptionController implements Initializable {
      */
     @FXML
     private AnchorPane pane;
+    @FXML
+    private Label bSign;
+    @FXML
+    private Label bLabel;
     
     public void nextWindow(String document) throws IOException {
         Parent home_page_parent = FXMLLoader.load(getClass().getResource(document));
@@ -41,6 +46,10 @@ public class FXML_OptionController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            if(!KeyPadListener.getListener().getAccountID().substring(0, 4).equals("PROH")){
+                bLabel.setVisible(false);
+                bSign.setVisible(false);
+            }
             // TODO
             KeyPadListener.getListener().setKeyPressedListener(new ButtonPressedListener() {
                 
@@ -57,12 +66,13 @@ public class FXML_OptionController implements Initializable {
                                         nextWindow("FXML_MoneyPage.fxml");
                                         break;
                                     case 'B':
-                                        if (Transaction.getCurrentTransaction().getAccountID().contains("PROH")) {
+                                        if (KeyPadListener.getListener().getAccountID().contains("PROH")) {
                                             nextWindow("FXML_BalancePage.fxml");
                                         }
                                         break;
                                     
                                     case 'C':
+                                        Transaction.clearTransaction();
                                         nextWindow("FXML_EndPage.fxml");
                                         break;
                                     case '*':
